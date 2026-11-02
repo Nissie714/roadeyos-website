@@ -1,8 +1,5 @@
 import Image from "next/image";
 
-const bookingUrl =
-  "https://docs.google.com/forms/d/e/1FAIpQLSevtkmy_lq159MZNlf4sExyWz67E6YSaAsmrpE1sq4ik34QIw/viewform";
-const bookingsUrl = "https://roadeyos.co.uk/m/bookings";
 const customerLoginUrl = "/customer-login";
 const instructorLoginUrl = "/instructor-login";
 const mapsUrl =
@@ -125,7 +122,6 @@ export default function Home() {
               backs you.
             </p>
             <div className="mt-10 flex flex-col gap-4 sm:flex-row">
-              <a className="button-primary" href={bookingUrl}>Book your session</a>
               <a className="button-secondary" href="#timetable">View timetable</a>
             </div>
             <div className="mt-12 flex flex-wrap gap-x-8 gap-y-3 text-sm font-bold text-white/65">
@@ -196,7 +192,7 @@ export default function Home() {
                 Find your session.
               </h2>
             </div>
-            <a className="button-secondary" href={bookingUrl}>Check availability</a>
+            <a className="button-secondary" href={customerLoginUrl}>Check availability</a>
           </div>
           <div className="mt-10 overflow-hidden rounded-3xl border border-white/10 bg-black/30">
             {timetable.map((item) => (
@@ -288,7 +284,7 @@ export default function Home() {
                 Whether your goal is to lose weight, build muscle or improve
                 cardiovascular fitness, she will help you move towards it.
               </p>
-              <a className="mt-9 inline-flex rounded-full bg-black px-7 py-4 font-black transition hover:-translate-y-0.5" href={bookingUrl}>
+              <a className="mt-9 inline-flex rounded-full bg-black px-7 py-4 font-black transition hover:-translate-y-0.5" href={customerLoginUrl}>
                 Train with Yolanda
               </a>
             </div>
@@ -390,8 +386,7 @@ export default function Home() {
             Sign in to book a class or manage the sessions you already have booked.
           </p>
           <div className="relative mt-9 flex flex-col justify-center gap-4 sm:flex-row">
-            <a className="rounded-full bg-black px-8 py-4 font-black" href={bookingUrl}>Book a class</a>
-            <a className="rounded-full border border-white/40 px-8 py-4 font-black hover:bg-white/10" href={bookingsUrl}>My bookings</a>
+            <a className="rounded-full bg-black px-8 py-4 font-black" href={customerLoginUrl}>Athlete login</a>
           </div>
         </div>
       </section>
