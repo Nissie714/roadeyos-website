@@ -13,6 +13,11 @@ type Session = {
   booked_by_me: boolean;
 };
 
+type Attendee = {
+  session_id: string;
+  display_name: string;
+};
+
 function formatDate(value: string) {
   return new Intl.DateTimeFormat("en-GB", {
     weekday: "short",
@@ -34,10 +39,14 @@ export default function ClassBookingManager() {
   const [workingId, setWorkingId] = useState<string | null>(null);
   const [message, setMessage] = useState("");
   const [isError, setIsError] = useState(false);
+  const [attendees, setAttendees] = useState<Attendee[]>([]);
 
   const loadSessions = useCallback(async () => {
     const supabase = createClient();
-    const { data, error } = await supabase.rpc("get_upcoming_sessions");
+    const [{ data, error }, attendeeResult] = await Promise.all([
+      supabase.rpc("get_upcoming_sessions"),
+      supabase.rpc("get_my_class_attendees"),
+    ]);
 
     if (error) {
       setIsError(true);
@@ -46,6 +55,7 @@ export default function ClassBookingManager() {
     } else {
       setSessions((data ?? []) as Session[]);
     }
+    setAttendees(attendeeResult.error ? [] : ((attendeeResult.data ?? []) as Attendee[]));
     setLoading(false);
   }, []);
 
@@ -168,6 +178,16 @@ export default function ClassBookingManager() {
               <div key={session.id} className="rounded-xl border border-white/10 bg-white/[.03] p-4">
                 <p className="font-black">{session.class_name}</p>
                 <p className="mt-1 text-sm text-white/50">{formatDate(session.starts_at)} · {formatTime(session.starts_at)}</p>
+                <div className="mt-4 border-t border-white/10 pt-3">
+                  <p className="text-xs font-black uppercase tracking-wider text-pink">Who&apos;s joining you</p>
+                  {attendees.some((attendee) => attendee.session_id === session.id) ? (
+                    <p className="mt-2 text-sm leading-6 text-white/65">
+                      {attendees.filter((attendee) => attendee.session_id === session.id).map((attendee) => attendee.display_name).join(", ")}
+                    </p>
+                  ) : (
+                    <p className="mt-2 text-sm text-white/40">No athletes have chosen to share their name yet.</p>
+                  )}
+                </div>
               </div>
             ))}
           </div>

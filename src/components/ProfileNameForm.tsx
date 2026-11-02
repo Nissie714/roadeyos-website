@@ -6,6 +6,7 @@ import { createClient } from "@/lib/supabase/client";
 export default function ProfileNameForm() {
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
+  const [showName, setShowName] = useState(false);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [message, setMessage] = useState("");
@@ -15,9 +16,10 @@ export default function ProfileNameForm() {
       const supabase = createClient();
       const { data: { user } } = await supabase.auth.getUser();
       if (user) {
-        const { data } = await supabase.from("profiles").select("first_name,last_name").eq("id", user.id).maybeSingle();
+        const { data } = await supabase.from("profiles").select("first_name,last_name,show_name_to_athletes").eq("id", user.id).maybeSingle();
         setFirstName(data?.first_name ?? user.user_metadata?.first_name ?? "");
         setLastName(data?.last_name ?? user.user_metadata?.last_name ?? "");
+        setShowName(data?.show_name_to_athletes ?? false);
       }
       setLoading(false);
     }, 0);
@@ -37,6 +39,7 @@ export default function ProfileNameForm() {
       first_name: cleanFirst,
       last_name: cleanLast,
       full_name: `${cleanFirst} ${cleanLast}`,
+      show_name_to_athletes: showName,
       updated_at: new Date().toISOString(),
     }).eq("id", user.id);
     setMessage(error ? "We could not save your name. Please try again." : "Your name has been saved.");
@@ -53,6 +56,12 @@ export default function ProfileNameForm() {
         <label><span className="mb-2 block text-sm font-bold text-white/60">First name</span><input required value={firstName} onChange={(event) => setFirstName(event.target.value)} autoComplete="given-name" className="progress-input" /></label>
         <label><span className="mb-2 block text-sm font-bold text-white/60">Last name</span><input required value={lastName} onChange={(event) => setLastName(event.target.value)} autoComplete="family-name" className="progress-input" /></label>
         <button disabled={saving} className="rounded-full bg-pink px-6 py-3 font-black disabled:opacity-60">{saving ? "Saving…" : "Save name"}</button>
+        <label className="flex cursor-pointer items-start gap-3 sm:col-span-3">
+          <input type="checkbox" checked={showName} onChange={(event) => setShowName(event.target.checked)} className="mt-1 h-4 w-4 accent-pink" />
+          <span className="text-sm leading-6 text-white/60">
+            Let other booked athletes see my first name and surname initial on the class list.
+          </span>
+        </label>
       </form>
       {message && <p role="status" className="mt-4 text-sm text-pink">{message}</p>}
     </section>
