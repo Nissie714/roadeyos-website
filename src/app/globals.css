@@ -1,32 +1,291 @@
 @import "tailwindcss";
 
 :root {
-  --background: #080808;
+  --background: #070707;
   --foreground: #ffffff;
+  --pink: #ff1478;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
+  --color-pink: var(--pink);
   --font-sans: Arial, Helvetica, sans-serif;
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+* {
+  box-sizing: border-box;
 }
 
 html {
   scroll-behavior: smooth;
 }
 
+body {
+  margin: 0;
+  background: var(--background);
+  color: var(--foreground);
+  font-family: Arial, Helvetica, sans-serif;
+}
+
 ::selection {
-  background: #ff2e88;
-  color: #ffffff;
+  background: var(--pink);
+  color: white;
 }
 
 :focus-visible {
-  outline: 3px solid #ff70ad;
+  outline: 3px solid #ff80b6;
   outline-offset: 4px;
+}
+
+.texture-grid {
+  background-image:
+    linear-gradient(rgba(255,255,255,.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,.05) 1px, transparent 1px);
+  background-size: 64px 64px;
+  mask-image: linear-gradient(to right, black, transparent 70%);
+}
+
+.section-shell {
+  width: min(100% - 2.5rem, 80rem);
+  margin-inline: auto;
+}
+
+.eyebrow {
+  color: #ff67a7;
+  font-size: .75rem;
+  font-weight: 900;
+  letter-spacing: .22em;
+  text-transform: uppercase;
+}
+
+.section-title {
+  max-width: 50rem;
+  margin-top: 1rem;
+  font-size: clamp(3rem, 7vw, 5.5rem);
+  font-weight: 900;
+  letter-spacing: -.06em;
+  line-height: .92;
+  text-transform: uppercase;
+}
+
+.section-copy {
+  max-width: 43rem;
+  margin-top: 1.75rem;
+  color: rgba(255,255,255,.62);
+  font-size: 1.125rem;
+  line-height: 1.8;
+}
+
+.nav-link {
+  transition: color .2s ease;
+}
+
+.nav-link:hover {
+  color: white;
+}
+
+.button-primary,
+.button-secondary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 999px;
+  padding: 1rem 1.75rem;
+  font-weight: 900;
+  transition: transform .2s ease, background-color .2s ease, border-color .2s ease;
+}
+
+.button-primary {
+  background: var(--pink);
+  color: white;
+  box-shadow: 0 0 35px rgba(255,20,120,.25);
+}
+
+.button-primary:hover,
+.button-secondary:hover {
+  transform: translateY(-2px);
+}
+
+.button-primary:hover {
+  background: #ff3b91;
+}
+
+.button-secondary {
+  border: 1px solid rgba(255,255,255,.22);
+  color: white;
+}
+
+.button-secondary:hover {
+  border-color: rgba(255,255,255,.55);
+  background: rgba(255,255,255,.06);
+}
+
+.class-card {
+  position: relative;
+  min-height: 31rem;
+  overflow: hidden;
+  border-radius: 2rem;
+  padding: 2rem;
+}
+
+.class-card h3 {
+  margin-top: 1.25rem;
+  font-size: clamp(2.8rem, 6vw, 5rem);
+  font-weight: 900;
+  letter-spacing: -.06em;
+  line-height: .9;
+  text-transform: uppercase;
+}
+
+.class-card > p:not(.eyebrow) {
+  max-width: 31rem;
+  margin-top: 2rem;
+  font-size: 1.1rem;
+  line-height: 1.75;
+}
+
+.pink-card {
+  background: var(--pink);
+}
+
+.dark-card {
+  border: 1px solid rgba(255,255,255,.12);
+  background: linear-gradient(145deg, #191919, #0b0b0b);
+}
+
+.dark-card > p:not(.eyebrow) {
+  color: rgba(255,255,255,.65);
+}
+
+.card-number {
+  position: absolute;
+  right: 1.75rem;
+  top: 1.5rem;
+  font-size: 4rem;
+  font-weight: 900;
+  line-height: 1;
+  opacity: .18;
+}
+
+.pill {
+  border: 1px solid rgba(255,255,255,.22);
+  border-radius: 999px;
+  padding: .55rem .85rem;
+  font-size: .75rem;
+  font-weight: 800;
+}
+
+.price-card,
+.review-card {
+  border: 1px solid rgba(255,255,255,.1);
+  border-radius: 1.75rem;
+  background: #111;
+  padding: 1.75rem;
+}
+
+.price-card {
+  min-height: 13rem;
+  padding: 1.5rem;
+}
+
+.featured-price {
+  border-color: rgba(255,20,120,.7);
+  background: linear-gradient(145deg, rgba(255,20,120,.22), #111 70%);
+  box-shadow: 0 20px 70px rgba(255,20,120,.12);
+}
+
+.price-label {
+  color: #ff67a7;
+  font-size: .75rem;
+  font-weight: 900;
+  letter-spacing: .15em;
+  text-transform: uppercase;
+}
+
+.price {
+  margin-top: 1.5rem;
+  font-size: 3.25rem;
+  font-weight: 900;
+  letter-spacing: -.06em;
+  line-height: 1;
+}
+
+.price-note {
+  margin-top: .75rem;
+  color: rgba(255,255,255,.55);
+  line-height: 1.5;
+}
+
+.review-card {
+  min-height: 17rem;
+  padding: 1.5rem;
+}
+
+.footer-heading {
+  font-size: .8rem;
+  font-weight: 900;
+  letter-spacing: .17em;
+  text-transform: uppercase;
+}
+
+.login-benefit {
+  position: relative;
+  padding-left: 1.75rem;
+}
+
+.login-benefit::before {
+  content: "✓";
+  position: absolute;
+  left: 0;
+  color: var(--pink);
+  font-weight: 900;
+}
+
+.calendar-arrow {
+  display: grid;
+  width: 2.75rem;
+  height: 2.75rem;
+  place-items: center;
+  border: 1px solid rgba(255,255,255,.14);
+  border-radius: 999px;
+  color: rgba(255,255,255,.55);
+  font-size: 1.5rem;
+}
+
+.progress-input {
+  width: 100%;
+  border: 1px solid rgba(255,255,255,.12);
+  border-radius: .8rem;
+  background: rgba(255,255,255,.045);
+  padding: .85rem 1rem;
+  color: white;
+  font-size: 1.1rem;
+  font-weight: 800;
+}
+
+.progress-input:focus {
+  border-color: var(--pink);
+}
+
+@media (min-width: 640px) {
+  .section-shell {
+    width: min(100% - 4rem, 80rem);
+  }
+
+  .class-card {
+    padding: 3rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    transition-duration: .01ms !important;
+  }
 }

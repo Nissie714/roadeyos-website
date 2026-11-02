@@ -2,9 +2,9 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Road-e-yos | Bootcamp & Fitness Centre",
+  title: "Road-e-yo's | Bootcamp & Fitness Centre",
   description:
-    "HYROX-inspired training and energetic bootcamp classes at Road-e-yos.",
+    "Bootcamp, HYROX training and personal coaching at Road-e-yo's in Old Romney, Kent.",
 };
 
 export default function RootLayout({
