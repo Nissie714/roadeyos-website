@@ -10,6 +10,8 @@ export default function AthleteLoginForm() {
   const [mode, setMode] = useState<"login" | "signup">("login");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
   const [busy, setBusy] = useState(false);
   const [message, setMessage] = useState(searchParams.get("message") ?? "");
   const [isError, setIsError] = useState(Boolean(searchParams.get("message")));
@@ -28,6 +30,11 @@ export default function AthleteLoginForm() {
         password,
         options: {
           emailRedirectTo: `${window.location.origin}/auth/callback`,
+          data: {
+            first_name: firstName.trim(),
+            last_name: lastName.trim(),
+            full_name: `${firstName.trim()} ${lastName.trim()}`.trim(),
+          },
         },
       });
 
@@ -91,6 +98,18 @@ export default function AthleteLoginForm() {
       )}
 
       <form className="mt-7 space-y-5" onSubmit={submit}>
+        {mode === "signup" && (
+          <div className="grid gap-5 sm:grid-cols-2">
+            <label className="block">
+              <span className="mb-2 block text-sm font-bold text-white/70">First name</span>
+              <input required autoComplete="given-name" value={firstName} onChange={(event) => setFirstName(event.target.value)} placeholder="First name" className="w-full rounded-xl border border-white/10 bg-white/[.04] px-4 py-4 text-white outline-none transition placeholder:text-white/25 focus:border-pink" />
+            </label>
+            <label className="block">
+              <span className="mb-2 block text-sm font-bold text-white/70">Last name</span>
+              <input required autoComplete="family-name" value={lastName} onChange={(event) => setLastName(event.target.value)} placeholder="Last name" className="w-full rounded-xl border border-white/10 bg-white/[.04] px-4 py-4 text-white outline-none transition placeholder:text-white/25 focus:border-pink" />
+            </label>
+          </div>
+        )}
         <label className="block">
           <span className="mb-2 block text-sm font-bold text-white/70">Email address</span>
           <input

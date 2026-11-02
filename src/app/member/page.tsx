@@ -4,6 +4,7 @@ import ClassBookingManager from "./ClassBookingManager";
 import SignOutButton from "./SignOutButton";
 import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
+import ProfileNameForm from "@/components/ProfileNameForm";
 
 export const metadata = {
   title: "Athlete Account | Road-e-yo's",
@@ -42,6 +43,7 @@ export default async function MemberPage() {
         </div>
 
         <ClassBookingManager />
+        <ProfileNameForm />
 
         <section className="mt-8 rounded-[2rem] border border-white/10 bg-[#101010] p-6">
           <p className="text-xs font-black uppercase tracking-widest text-pink">Cancellation policy</p>
