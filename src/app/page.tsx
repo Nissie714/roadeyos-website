@@ -4,6 +4,7 @@ const bookingUrl =
   "https://docs.google.com/forms/d/e/1FAIpQLSevtkmy_lq159MZNlf4sExyWz67E6YSaAsmrpE1sq4ik34QIw/viewform";
 const bookingsUrl = "https://roadeyos.co.uk/m/bookings";
 const customerLoginUrl = "/customer-login";
+const instructorLoginUrl = "/instructor-login";
 const mapsUrl =
   "https://www.google.com/maps/search/?api=1&query=Unit+3%2C+Sycamore+Farm%2C+Old+Romney%2C+Kent%2C+TN29+9SY";
 
@@ -87,6 +88,12 @@ export default function Home() {
               href={customerLoginUrl}
             >
               Athlete login
+            </a>
+            <a
+              className="rounded-full border border-white/25 px-4 py-3 text-xs font-black transition hover:border-pink hover:text-pink sm:px-5 sm:text-sm"
+              href={instructorLoginUrl}
+            >
+              Instructor login
             </a>
           </div>
         </nav>
