@@ -1,14 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
-import AttendanceStreakTracker from "./AttendanceStreakTracker";
 import ClassBookingManager from "./ClassBookingManager";
-import EmergencyContactForm from "./EmergencyContactForm";
-import MembershipStatusCard from "./MembershipStatusCard";
-import OneToOneBalance from "./OneToOneBalance";
-import OnlinePayments from "./OnlinePayments";
-import PaymentHistory from "./PaymentHistory";
-import PerformanceTracker from "./PerformanceTracker";
-import WeightProgressTracker from "./WeightProgressTracker";
 import SignOutButton from "./SignOutButton";
 import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
@@ -47,29 +39,15 @@ export default async function MemberPage() {
             </h1>
             <p className="mt-4 text-white/55">Signed in as {user.email}</p>
           </div>
-          <div className="flex gap-3">
-            <button disabled className="rounded-full bg-pink px-6 py-3 font-black">Book a class</button>
-            <button disabled className="rounded-full border border-white/20 px-6 py-3 font-black">My account</button>
-          </div>
         </div>
 
         <ClassBookingManager />
-        <AttendanceStreakTracker />
-        <OneToOneBalance />
-        <WeightProgressTracker />
-        <PerformanceTracker />
-        <OnlinePayments />
-        <PaymentHistory />
 
-        <section className="mt-12 grid gap-6 md:grid-cols-2 xl:grid-cols-3">
-            <MembershipStatusCard />
-            <section className="rounded-[2rem] border border-white/10 bg-[#101010] p-6">
-              <p className="text-xs font-black uppercase tracking-widest text-pink">Cancellation policy</p>
-              <p className="mt-4 text-sm leading-6 text-white/55">
-                Group bookings require 12 hours&apos; notice. Private sessions require 24 hours&apos; notice.
-              </p>
-            </section>
-            <EmergencyContactForm />
+        <section className="mt-8 rounded-[2rem] border border-white/10 bg-[#101010] p-6">
+          <p className="text-xs font-black uppercase tracking-widest text-pink">Cancellation policy</p>
+          <p className="mt-4 text-sm leading-6 text-white/55">
+            Group bookings require 12 hours&apos; notice. Contact Road-e-yo&apos;s directly if you need help with a late cancellation.
+          </p>
         </section>
       </div>
     </main>

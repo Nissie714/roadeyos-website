@@ -1,297 +1,183 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
+import { createClient } from "@/lib/supabase/client";
 
 type Session = {
   id: string;
-  day: string;
-  date: string;
-  time: string;
-  name: string;
-  bookedCount: number;
-  attendees: string[];
+  class_name: string;
+  starts_at: string;
+  duration_minutes: number;
+  capacity: number;
+  booked_count: number;
+  booked_by_me: boolean;
 };
 
-const classCapacity = 25;
+function formatDate(value: string) {
+  return new Intl.DateTimeFormat("en-GB", {
+    weekday: "short",
+    day: "numeric",
+    month: "short",
+  }).format(new Date(value));
+}
 
-const sessions: Session[] = [
-  { id: "mon-1800", day: "Mon", date: "27", time: "6:00 pm", name: "Bootcamp", bookedCount: 17, attendees: ["Sam R.", "Jess T."] },
-  { id: "tue-0930", day: "Tue", date: "28", time: "9:30 am", name: "Bootcamp", bookedCount: 13, attendees: ["Alex P."] },
-  { id: "tue-1915", day: "Tue", date: "28", time: "7:15 pm", name: "HYROX", bookedCount: 21, attendees: ["Jamie C.", "Taylor B."] },
-  { id: "wed-1800", day: "Wed", date: "29", time: "6:00 pm", name: "Bootcamp", bookedCount: 18, attendees: ["Morgan L."] },
-  { id: "thu-0930", day: "Thu", date: "30", time: "9:30 am", name: "Bootcamp", bookedCount: 15, attendees: [] },
-  { id: "fri-0930", day: "Fri", date: "31", time: "9:30 am", name: "HYROX", bookedCount: 22, attendees: ["Chris D."] },
-  { id: "fri-1800", day: "Fri", date: "31", time: "6:00 pm", name: "HYROX", bookedCount: 19, attendees: ["Jordan W.", "Casey H."] },
-  { id: "sat-0900", day: "Sat", date: "01", time: "9:00 am", name: "Bootcamp", bookedCount: 16, attendees: ["Robin S."] },
-];
+function formatTime(value: string) {
+  return new Intl.DateTimeFormat("en-GB", {
+    hour: "numeric",
+    minute: "2-digit",
+  }).format(new Date(value));
+}
 
 export default function ClassBookingManager() {
-  const [bookedIds, setBookedIds] = useState<string[]>(["mon-1800"]);
-  const [reschedulingId, setReschedulingId] = useState<string | null>(null);
-  const [replacementId, setReplacementId] = useState("");
-  const [showMyName, setShowMyName] = useState(false);
-  const [message, setMessage] = useState(
-    "You have 1 class booked this week.",
-  );
+  const [sessions, setSessions] = useState<Session[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [workingId, setWorkingId] = useState<string | null>(null);
+  const [message, setMessage] = useState("");
+  const [isError, setIsError] = useState(false);
 
-  const bookedSessions = useMemo(
-    () => sessions.filter((session) => bookedIds.includes(session.id)),
-    [bookedIds],
-  );
+  const loadSessions = useCallback(async () => {
+    const supabase = createClient();
+    const { data, error } = await supabase.rpc("get_upcoming_sessions");
 
-  function book(session: Session) {
-    setBookedIds((current) => [...current, session.id]);
-    setMessage(`${session.name} on ${session.day} at ${session.time} is booked in this preview.`);
-  }
-
-  function cancel(session: Session) {
-    setBookedIds((current) => current.filter((id) => id !== session.id));
-    setReschedulingId(null);
-    setReplacementId("");
-    setMessage(`${session.name} on ${session.day} at ${session.time} has been cancelled in this preview.`);
-  }
-
-  function confirmReschedule(original: Session) {
-    const replacement = sessions.find((session) => session.id === replacementId);
-    if (!replacement) {
-      setMessage("Choose a replacement class first.");
-      return;
+    if (error) {
+      setIsError(true);
+      setMessage("Class bookings are temporarily unavailable. Please contact Road-e-yo's if you need help booking.");
+      setSessions([]);
+    } else {
+      setSessions((data ?? []) as Session[]);
     }
+    setLoading(false);
+  }, []);
 
-    setBookedIds((current) => [
-      ...current.filter((id) => id !== original.id),
-      replacement.id,
-    ]);
-    setReschedulingId(null);
-    setReplacementId("");
-    setMessage(
-      `Booking moved from ${original.day} at ${original.time} to ${replacement.day} at ${replacement.time}.`,
-    );
+  useEffect(() => {
+    const timer = window.setTimeout(() => void loadSessions(), 0);
+    return () => window.clearTimeout(timer);
+  }, [loadSessions]);
+
+  const myBookings = useMemo(
+    () => sessions.filter((session) => session.booked_by_me),
+    [sessions],
+  );
+
+  async function book(session: Session) {
+    setWorkingId(session.id);
+    setMessage("");
+    setIsError(false);
+    const supabase = createClient();
+    const { error } = await supabase.rpc("book_class", { p_session_id: session.id });
+
+    if (error) {
+      setIsError(true);
+      setMessage(error.message.includes("full") ? "Sorry, that class has just become full." : error.message);
+    } else {
+      setMessage(`You are booked into ${session.class_name} on ${formatDate(session.starts_at)} at ${formatTime(session.starts_at)}.`);
+      await loadSessions();
+    }
+    setWorkingId(null);
+  }
+
+  async function cancel(session: Session) {
+    if (!window.confirm(`Cancel your ${session.class_name} booking on ${formatDate(session.starts_at)}?`)) return;
+
+    setWorkingId(session.id);
+    setMessage("");
+    setIsError(false);
+    const supabase = createClient();
+    const { error } = await supabase.rpc("cancel_class", { p_session_id: session.id });
+
+    if (error) {
+      setIsError(true);
+      setMessage(error.message);
+    } else {
+      setMessage("Your booking has been cancelled.");
+      await loadSessions();
+    }
+    setWorkingId(null);
   }
 
   return (
     <section className="mt-10 rounded-[2rem] border border-white/10 bg-[#101010] p-5 sm:p-8">
       <div className="flex flex-col justify-between gap-5 sm:flex-row sm:items-end">
         <div>
-          <p className="text-sm font-black uppercase tracking-widest text-pink">
-            Class calendar
-          </p>
-          <h2 className="mt-2 text-3xl font-black uppercase tracking-tight">
-            Book your training
-          </h2>
+          <p className="text-sm font-black uppercase tracking-widest text-pink">Live class calendar</p>
+          <h2 className="mt-2 text-3xl font-black uppercase tracking-tight">Book your training</h2>
           <p className="mt-3 text-sm leading-6 text-white/50">
-            27 July-1 August · choose a class or manage an existing booking.
+            Choose an available class. Every session is limited to 25 athletes.
           </p>
         </div>
-        <span className="w-fit rounded-full border border-pink/35 bg-pink/10 px-4 py-2 text-xs font-black text-pink">
-          INTERACTIVE PREVIEW
+        <span className="w-fit rounded-full border border-emerald-400/35 bg-emerald-400/10 px-4 py-2 text-xs font-black text-emerald-300">
+          LIVE BOOKINGS
         </span>
       </div>
 
-      <p
-        role="status"
-        aria-live="polite"
-        className="mt-6 rounded-xl border border-pink/25 bg-pink/10 px-4 py-3 text-sm font-bold text-pink"
-      >
-        {message}
-      </p>
+      {message && (
+        <p role="status" aria-live="polite" className={`mt-6 rounded-xl border px-4 py-3 text-sm font-bold ${isError ? "border-red-400/30 bg-red-400/10 text-red-200" : "border-pink/25 bg-pink/10 text-pink"}`}>
+          {message}
+        </p>
+      )}
 
-      <div className="mt-4 rounded-xl border border-white/10 bg-black/25 p-4 sm:flex sm:items-center sm:justify-between sm:gap-6">
-        <div>
-          <p className="text-sm font-black">Show my name on class lists</p>
-          <p className="mt-1 max-w-2xl text-xs leading-5 text-white/45">
-            If switched on, logged-in athletes can see your first name and
-            surname initial on sessions you have booked. It is off by default
-            and you can withdraw permission at any time.
-          </p>
-        </div>
-        <label className="mt-4 flex cursor-pointer items-center gap-3 sm:mt-0">
-          <input
-            type="checkbox"
-            checked={showMyName}
-            onChange={(event) => {
-              const enabled = event.target.checked;
-              setShowMyName(enabled);
-              setMessage(
-                enabled
-                  ? "Your name will appear to logged-in athletes on your booked sessions."
-                  : "Your name is now hidden from other athletes.",
-              );
-            }}
-            className="peer sr-only"
-          />
-          <span className="relative h-7 w-12 rounded-full bg-white/15 transition peer-checked:bg-pink after:absolute after:left-1 after:top-1 after:h-5 after:w-5 after:rounded-full after:bg-white after:transition peer-checked:after:translate-x-5" />
-          <span className="min-w-8 text-sm font-black text-white/60">
-            {showMyName ? "On" : "Off"}
-          </span>
-        </label>
-      </div>
-
-      <div className="mt-6 grid gap-3">
-        {sessions.map((session) => {
-          const booked = bookedIds.includes(session.id);
-          const availableSpaces = Math.max(
-            0,
-            classCapacity - session.bookedCount - (booked ? 1 : 0),
-          );
-          const rescheduling = reschedulingId === session.id;
-          const visibleAttendees = [
-            ...session.attendees,
-            ...(booked && showMyName ? ["You"] : []),
-          ];
-
-          return (
-            <article
-              key={session.id}
-              className={`rounded-2xl border p-4 ${
-                booked
-                  ? "border-pink/50 bg-pink/[.08]"
-                  : "border-white/10 bg-white/[.025]"
-              }`}
-            >
-              <div className="grid items-center gap-4 sm:grid-cols-[4.5rem_1fr_auto]">
-                <div className="flex items-center gap-3 sm:block sm:text-center">
-                  <p className="text-xs font-black uppercase tracking-widest text-white/45">
-                    {session.day}
-                  </p>
-                  <p className="text-2xl font-black text-pink">{session.date}</p>
-                </div>
-                <div>
-                  <div className="flex flex-wrap items-center gap-3">
-                    <h3 className="font-black">{session.name}</h3>
-                    {booked && (
-                      <span className="rounded-full bg-pink px-3 py-1 text-[.65rem] font-black uppercase tracking-wider">
-                        Booked
-                      </span>
-                    )}
+      {loading ? (
+        <p className="mt-8 text-sm text-white/50">Loading available classes…</p>
+      ) : sessions.length === 0 && !isError ? (
+        <p className="mt-8 rounded-xl border border-white/10 bg-black/25 p-5 text-sm text-white/50">
+          There are no upcoming classes available to book yet.
+        </p>
+      ) : (
+        <div className="mt-6 grid gap-3">
+          {sessions.map((session) => {
+            const spaces = Math.max(0, session.capacity - session.booked_count);
+            const busy = workingId === session.id;
+            return (
+              <article key={session.id} className={`rounded-2xl border p-4 ${session.booked_by_me ? "border-pink/50 bg-pink/[.08]" : "border-white/10 bg-white/[.025]"}`}>
+                <div className="grid items-center gap-4 sm:grid-cols-[8rem_1fr_auto]">
+                  <div>
+                    <p className="text-sm font-black text-pink">{formatDate(session.starts_at)}</p>
+                    <p className="mt-1 text-xs text-white/45">{formatTime(session.starts_at)}</p>
                   </div>
-                  <p className="mt-1 text-sm text-white/50">
-                    {session.time} · 60 minutes
-                  </p>
-                </div>
-                <div className="flex flex-wrap items-center gap-3 sm:justify-end">
-                  <span className="mr-2 text-xs font-bold text-emerald-400">
-                    {availableSpaces} of {classCapacity} spaces remaining
-                  </span>
-                  {booked ? (
-                    <>
-                      <button
-                        type="button"
-                        onClick={() => {
-                          setReschedulingId(rescheduling ? null : session.id);
-                          setReplacementId("");
-                        }}
-                        className="rounded-full border border-white/25 px-4 py-2 text-xs font-black transition hover:border-white/60"
-                      >
-                        Reschedule
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => cancel(session)}
-                        className="rounded-full border border-pink/60 px-4 py-2 text-xs font-black text-pink transition hover:bg-pink hover:text-white"
-                      >
-                        Cancel
-                      </button>
-                    </>
+                  <div>
+                    <div className="flex flex-wrap items-center gap-3">
+                      <h3 className="font-black">{session.class_name}</h3>
+                      {session.booked_by_me && <span className="rounded-full bg-pink px-3 py-1 text-[.65rem] font-black uppercase tracking-wider">Booked</span>}
+                    </div>
+                    <p className="mt-1 text-sm text-white/50">{session.duration_minutes} minutes · {spaces} spaces remaining</p>
+                  </div>
+                  {session.booked_by_me ? (
+                    <button disabled={busy} onClick={() => void cancel(session)} className="rounded-full border border-pink/60 px-5 py-2 text-xs font-black text-pink transition hover:bg-pink hover:text-white disabled:opacity-50">
+                      {busy ? "Cancelling…" : "Cancel booking"}
+                    </button>
                   ) : (
-                    <button
-                      type="button"
-                      disabled={availableSpaces === 0}
-                      onClick={() => book(session)}
-                      className="rounded-full bg-pink px-5 py-2 text-xs font-black transition enabled:hover:bg-[#ff3b91] disabled:cursor-not-allowed disabled:bg-white/10 disabled:text-white/35"
-                    >
-                      {availableSpaces === 0 ? "Full" : "Book"}
+                    <button disabled={busy || spaces === 0} onClick={() => void book(session)} className="rounded-full bg-pink px-5 py-2 text-xs font-black transition enabled:hover:bg-[#ff3b91] disabled:cursor-not-allowed disabled:bg-white/10 disabled:text-white/35">
+                      {busy ? "Booking…" : spaces === 0 ? "Class full" : "Book class"}
                     </button>
                   )}
                 </div>
-              </div>
-
-              {visibleAttendees.length > 0 && (
-                <div className="mt-4 flex flex-wrap items-center gap-2 border-t border-white/10 pt-4">
-                  <span className="mr-1 text-xs font-black uppercase tracking-widest text-white/35">
-                    Going
-                  </span>
-                  {visibleAttendees.map((attendee) => (
-                    <span
-                      key={attendee}
-                      className={`rounded-full border px-3 py-1 text-xs font-bold ${
-                        attendee === "You"
-                          ? "border-pink bg-pink/10 text-pink"
-                          : "border-white/10 bg-white/[.04] text-white/55"
-                      }`}
-                    >
-                      {attendee}
-                    </span>
-                  ))}
-                </div>
-              )}
-
-              {rescheduling && (
-                <div className="mt-4 grid gap-3 border-t border-white/10 pt-4 sm:grid-cols-[1fr_auto]">
-                  <label>
-                    <span className="sr-only">Choose a replacement class</span>
-                    <select
-                      value={replacementId}
-                      onChange={(event) => setReplacementId(event.target.value)}
-                      className="progress-input"
-                    >
-                      <option value="">Choose another session</option>
-                      {sessions
-                        .filter(
-                          (option) =>
-                            option.id !== session.id &&
-                            !bookedIds.includes(option.id),
-                        )
-                        .map((option) => (
-                          <option key={option.id} value={option.id}>
-                            {option.day} {option.date} · {option.time} · {option.name}
-                          </option>
-                        ))}
-                    </select>
-                  </label>
-                  <button
-                    type="button"
-                    onClick={() => confirmReschedule(session)}
-                    className="rounded-full bg-white px-5 py-3 text-sm font-black text-black"
-                  >
-                    Confirm move
-                  </button>
-                </div>
-              )}
-            </article>
-          );
-        })}
-      </div>
+              </article>
+            );
+          })}
+        </div>
+      )}
 
       <div className="mt-8 rounded-2xl border border-white/10 bg-black/25 p-5">
         <div className="flex flex-wrap items-center justify-between gap-3">
-          <h3 className="text-xl font-black uppercase">My bookings</h3>
-          <span className="text-sm font-bold text-pink">
-            {bookedSessions.length} booked
-          </span>
+          <h3 className="text-xl font-black uppercase">Upcoming bookings</h3>
+          <span className="text-sm font-bold text-pink">{myBookings.length} booked</span>
         </div>
-        {bookedSessions.length > 0 ? (
+        {myBookings.length > 0 ? (
           <div className="mt-4 grid gap-3 sm:grid-cols-2">
-            {bookedSessions.map((session) => (
+            {myBookings.map((session) => (
               <div key={session.id} className="rounded-xl border border-white/10 bg-white/[.03] p-4">
-                <p className="font-black">{session.name}</p>
-                <p className="mt-1 text-sm text-white/50">
-                  {session.day} {session.date} · {session.time}
-                </p>
+                <p className="font-black">{session.class_name}</p>
+                <p className="mt-1 text-sm text-white/50">{formatDate(session.starts_at)} · {formatTime(session.starts_at)}</p>
               </div>
             ))}
           </div>
         ) : (
-          <p className="mt-4 text-sm text-white/45">
-            You do not currently have any classes booked this week.
-          </p>
+          <p className="mt-4 text-sm text-white/45">You do not currently have any upcoming classes booked.</p>
         )}
       </div>
 
       <p className="mt-5 text-xs leading-5 text-white/35">
-        Preview actions last only until the page is refreshed. Confirmation
-        emails, waiting lists, privacy preferences and real class capacities
-        will be connected later. Names shown above are fictional examples.
+        Group sessions must be cancelled at least 12 hours before the class begins.
       </p>
     </section>
   );
