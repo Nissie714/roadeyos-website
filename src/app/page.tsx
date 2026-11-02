@@ -122,6 +122,7 @@ export default function Home() {
               backs you.
             </p>
             <div className="mt-10 flex flex-col gap-4 sm:flex-row">
+              <a className="button-primary" href="#coach">Meet your coach</a>
               <a className="button-secondary" href="#timetable">View timetable</a>
             </div>
             <div className="mt-12 flex flex-wrap gap-x-8 gap-y-3 text-sm font-bold text-white/65">

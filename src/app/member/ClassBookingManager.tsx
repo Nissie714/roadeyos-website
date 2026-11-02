@@ -106,7 +106,39 @@ export default function ClassBookingManager() {
   }
 
   return (
-    <section className="mt-10 rounded-[2rem] border border-white/10 bg-[#101010] p-5 sm:p-8">
+    <>
+      <section className="mt-8 rounded-[2rem] border border-white/10 bg-[#101010] p-5 sm:p-8">
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <h2 className="text-xl font-black uppercase">Upcoming bookings</h2>
+          <span className="text-sm font-bold text-pink">{myBookings.length} booked</span>
+        </div>
+        {loading ? (
+          <p className="mt-4 text-sm text-white/45">Loading your upcoming bookings…</p>
+        ) : myBookings.length > 0 ? (
+          <div className="mt-4 grid gap-3 sm:grid-cols-2">
+            {myBookings.map((session) => (
+              <div key={session.id} className="rounded-xl border border-white/10 bg-white/[.03] p-4">
+                <p className="font-black">{session.class_name}</p>
+                <p className="mt-1 text-sm text-white/50">{formatDate(session.starts_at)} · {formatTime(session.starts_at)}</p>
+                <div className="mt-4 border-t border-white/10 pt-3">
+                  <p className="text-xs font-black uppercase tracking-wider text-pink">Who&apos;s joining you</p>
+                  {attendees.some((attendee) => attendee.session_id === session.id) ? (
+                    <p className="mt-2 text-sm leading-6 text-white/65">
+                      {attendees.filter((attendee) => attendee.session_id === session.id).map((attendee) => attendee.display_name).join(", ")}
+                    </p>
+                  ) : (
+                    <p className="mt-2 text-sm text-white/40">No athletes have chosen to share their name yet.</p>
+                  )}
+                </div>
+              </div>
+            ))}
+          </div>
+        ) : (
+          <p className="mt-4 text-sm text-white/45">You do not currently have any upcoming classes booked.</p>
+        )}
+      </section>
+
+      <section className="mt-8 rounded-[2rem] border border-white/10 bg-[#101010] p-5 sm:p-8">
       <div className="flex flex-col justify-between gap-5 sm:flex-row sm:items-end">
         <div>
           <p className="text-sm font-black uppercase tracking-widest text-pink">Live class calendar</p>
@@ -167,38 +199,10 @@ export default function ClassBookingManager() {
         </div>
       )}
 
-      <div className="mt-8 rounded-2xl border border-white/10 bg-black/25 p-5">
-        <div className="flex flex-wrap items-center justify-between gap-3">
-          <h3 className="text-xl font-black uppercase">Upcoming bookings</h3>
-          <span className="text-sm font-bold text-pink">{myBookings.length} booked</span>
-        </div>
-        {myBookings.length > 0 ? (
-          <div className="mt-4 grid gap-3 sm:grid-cols-2">
-            {myBookings.map((session) => (
-              <div key={session.id} className="rounded-xl border border-white/10 bg-white/[.03] p-4">
-                <p className="font-black">{session.class_name}</p>
-                <p className="mt-1 text-sm text-white/50">{formatDate(session.starts_at)} · {formatTime(session.starts_at)}</p>
-                <div className="mt-4 border-t border-white/10 pt-3">
-                  <p className="text-xs font-black uppercase tracking-wider text-pink">Who&apos;s joining you</p>
-                  {attendees.some((attendee) => attendee.session_id === session.id) ? (
-                    <p className="mt-2 text-sm leading-6 text-white/65">
-                      {attendees.filter((attendee) => attendee.session_id === session.id).map((attendee) => attendee.display_name).join(", ")}
-                    </p>
-                  ) : (
-                    <p className="mt-2 text-sm text-white/40">No athletes have chosen to share their name yet.</p>
-                  )}
-                </div>
-              </div>
-            ))}
-          </div>
-        ) : (
-          <p className="mt-4 text-sm text-white/45">You do not currently have any upcoming classes booked.</p>
-        )}
-      </div>
-
       <p className="mt-5 text-xs leading-5 text-white/35">
         Group sessions must be cancelled at least 12 hours before the class begins.
       </p>
-    </section>
+      </section>
+    </>
   );
 }
