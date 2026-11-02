@@ -42,7 +42,6 @@ export default async function MemberPage() {
           </div>
         </div>
 
-        <ClassBookingManager />
         <ProfileNameForm />
 
         <section className="mt-8 rounded-[2rem] border border-white/10 bg-[#101010] p-6">
@@ -51,6 +50,8 @@ export default async function MemberPage() {
             Group bookings require 12 hours&apos; notice. Contact Road-e-yo&apos;s directly if you need help with a late cancellation.
           </p>
         </section>
+
+        <ClassBookingManager />
       </div>
     </main>
   );
