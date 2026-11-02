@@ -10,6 +10,8 @@ export default function ProfileNameForm() {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [message, setMessage] = useState("");
+  const [sharingSaving, setSharingSaving] = useState(false);
+  const [sharingMessage, setSharingMessage] = useState("");
 
   useEffect(() => {
     const timer = window.setTimeout(async () => {
@@ -39,11 +41,38 @@ export default function ProfileNameForm() {
       first_name: cleanFirst,
       last_name: cleanLast,
       full_name: `${cleanFirst} ${cleanLast}`,
-      show_name_to_athletes: showName,
       updated_at: new Date().toISOString(),
     }).eq("id", user.id);
     setMessage(error ? "We could not save your name. Please try again." : "Your name has been saved.");
     setSaving(false);
+  }
+
+  async function updateNameSharing(checked: boolean) {
+    const previousValue = showName;
+    setShowName(checked);
+    setSharingSaving(true);
+    setSharingMessage("");
+
+    const supabase = createClient();
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) {
+      setShowName(previousValue);
+      setSharingSaving(false);
+      return;
+    }
+
+    const { error } = await supabase
+      .from("profiles")
+      .update({ show_name_to_athletes: checked, updated_at: new Date().toISOString() })
+      .eq("id", user.id);
+
+    if (error) {
+      setShowName(previousValue);
+      setSharingMessage("We could not update your choice. Please try again.");
+    } else {
+      setSharingMessage(checked ? "Permission saved. Your name may now appear to athletes booked into the same class." : "Permission withdrawn. Your name is now hidden from other athletes.");
+    }
+    setSharingSaving(false);
   }
 
   if (loading) return null;
@@ -56,14 +85,27 @@ export default function ProfileNameForm() {
         <label><span className="mb-2 block text-sm font-bold text-white/60">First name</span><input required value={firstName} onChange={(event) => setFirstName(event.target.value)} autoComplete="given-name" className="progress-input" /></label>
         <label><span className="mb-2 block text-sm font-bold text-white/60">Last name</span><input required value={lastName} onChange={(event) => setLastName(event.target.value)} autoComplete="family-name" className="progress-input" /></label>
         <button disabled={saving} className="rounded-full bg-pink px-6 py-3 font-black disabled:opacity-60">{saving ? "Saving…" : "Save name"}</button>
-        <label className="flex cursor-pointer items-start gap-3 sm:col-span-3">
-          <input type="checkbox" checked={showName} onChange={(event) => setShowName(event.target.checked)} className="mt-1 h-4 w-4 accent-pink" />
-          <span className="text-sm leading-6 text-white/60">
-            Let other booked athletes see my first name and surname initial on the class list.
-          </span>
-        </label>
       </form>
       {message && <p role="status" className="mt-4 text-sm text-pink">{message}</p>}
+      <div className="mt-6 rounded-2xl border border-pink/25 bg-pink/[.06] p-4 sm:p-5">
+        <label className="flex cursor-pointer items-start gap-3">
+          <input
+            type="checkbox"
+            checked={showName}
+            disabled={sharingSaving}
+            onChange={(event) => void updateNameSharing(event.target.checked)}
+            className="mt-1 h-5 w-5 shrink-0 accent-pink disabled:opacity-50"
+          />
+          <span>
+            <span className="block font-black">Display my name to other booked athletes</span>
+            <span className="mt-1 block text-sm leading-6 text-white/55">
+              I am happy for my first name and surname initial to be shown to other athletes booked into the same session. I can untick this box and withdraw permission at any time.
+            </span>
+          </span>
+        </label>
+        {sharingSaving && <p className="mt-3 text-xs font-bold text-white/45">Saving your choice…</p>}
+        {sharingMessage && <p role="status" className="mt-3 text-xs font-bold text-pink">{sharingMessage}</p>}
+      </div>
     </section>
   );
 }
