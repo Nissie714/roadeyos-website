@@ -9,13 +9,21 @@ import OnlinePayments from "./OnlinePayments";
 import PaymentHistory from "./PaymentHistory";
 import PerformanceTracker from "./PerformanceTracker";
 import WeightProgressTracker from "./WeightProgressTracker";
+import SignOutButton from "./SignOutButton";
+import { createClient } from "@/lib/supabase/server";
+import { redirect } from "next/navigation";
 
 export const metadata = {
-  title: "Member Area Preview | Road-e-yo's",
-  description: "Preview the new Road-e-yo's booking calendar and member dashboard.",
+  title: "Athlete Account | Road-e-yo's",
+  description: "Your secure Road-e-yo's athlete account.",
 };
 
-export default function MemberPreviewPage() {
+export default async function MemberPage() {
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+
+  if (!user) redirect("/customer-login");
+
   return (
     <main className="min-h-screen bg-[#070707] text-white">
       <header className="border-b border-white/10 bg-black">
@@ -26,24 +34,18 @@ export default function MemberPreviewPage() {
             </span>
             <span className="text-lg font-black">Road-e-yo&apos;s<span className="text-pink">.</span></span>
           </Link>
-          <Link className="rounded-full border border-white/20 px-4 py-2 text-sm font-black" href="/customer-login">
-            Exit preview
-          </Link>
+          <SignOutButton />
         </div>
       </header>
-
-      <div className="border-b border-pink/20 bg-pink/10 px-5 py-3 text-center text-sm font-bold text-pink">
-        Member-area preview — buttons do not create or cancel real bookings.
-      </div>
 
       <div className="section-shell py-12 sm:py-16">
         <div className="flex flex-col justify-between gap-7 lg:flex-row lg:items-end">
           <div>
             <p className="eyebrow">Customer dashboard</p>
             <h1 className="mt-3 text-5xl font-black uppercase tracking-[-.05em] sm:text-6xl">
-              Hello, member.
+              Hello, athlete.
             </h1>
-            <p className="mt-4 text-white/55">Here is your Road-e-yo&apos;s training week.</p>
+            <p className="mt-4 text-white/55">Signed in as {user.email}</p>
           </div>
           <div className="flex gap-3">
             <button disabled className="rounded-full bg-pink px-6 py-3 font-black">Book a class</button>
