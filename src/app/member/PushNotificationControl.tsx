@@ -3,6 +3,26 @@
 import { useEffect, useState } from "react";
 import { createClient } from "@/lib/supabase/client";
 
+function getOneSignal(): Promise<RoadeyosOneSignalSdk> {
+  if (window.roadeyosOneSignal) return Promise.resolve(window.roadeyosOneSignal);
+
+  return new Promise((resolve, reject) => {
+    const timeout = window.setTimeout(() => {
+      window.removeEventListener("roadeyos:onesignal-ready", handleReady);
+      reject(new Error("OneSignal did not finish loading"));
+    }, 10000);
+
+    function handleReady() {
+      if (!window.roadeyosOneSignal) return;
+      window.clearTimeout(timeout);
+      window.removeEventListener("roadeyos:onesignal-ready", handleReady);
+      resolve(window.roadeyosOneSignal);
+    }
+
+    window.addEventListener("roadeyos:onesignal-ready", handleReady);
+  });
+}
+
 export default function PushNotificationControl() {
   const [supported, setSupported] = useState(true);
   const [enabled, setEnabled] = useState(false);
@@ -15,12 +35,11 @@ export default function PushNotificationControl() {
       return;
     }
 
-    window.OneSignalDeferred = window.OneSignalDeferred || [];
-    window.OneSignalDeferred.push(async (OneSignal) => {
+    void getOneSignal().then((OneSignal) => {
       const refresh = () => setEnabled(Boolean(OneSignal.Notifications.permission && OneSignal.User.PushSubscription.optedIn));
       refresh();
       OneSignal.User.PushSubscription.addEventListener("change", refresh);
-    });
+    }).catch(() => setMessage("Phone notifications are temporarily unavailable. Please refresh the page and try again."));
   }, []);
 
   async function registerSubscription(oneSignal: RoadeyosOneSignalSdk) {
@@ -35,13 +54,11 @@ export default function PushNotificationControl() {
   async function enableNotifications() {
     setBusy(true);
     setMessage("");
-    window.OneSignalDeferred = window.OneSignalDeferred || [];
-    window.OneSignalDeferred.push(async (OneSignal) => {
-      try {
+    try {
+        const OneSignal = await getOneSignal();
         await OneSignal.Notifications.requestPermission();
         if (!OneSignal.Notifications.permission) {
           setMessage("Notifications were not allowed. You can change this in your phone or browser settings.");
-          setBusy(false);
           return;
         }
         await OneSignal.User.PushSubscription.optIn();
@@ -51,17 +68,16 @@ export default function PushNotificationControl() {
         setMessage(registered ? "Phone notifications are enabled for class changes." : "Permission was granted, but setup is still completing. Please press Enable again.");
       } catch {
         setMessage("We could not enable phone notifications. Please try again.");
+      } finally {
+        setBusy(false);
       }
-      setBusy(false);
-    });
   }
 
   async function disableNotifications() {
     setBusy(true);
     setMessage("");
-    window.OneSignalDeferred = window.OneSignalDeferred || [];
-    window.OneSignalDeferred.push(async (OneSignal) => {
-      try {
+    try {
+        const OneSignal = await getOneSignal();
         const subscriptionId = OneSignal.User.PushSubscription.id;
         await OneSignal.User.PushSubscription.optOut();
         if (subscriptionId) {
@@ -72,9 +88,9 @@ export default function PushNotificationControl() {
         setMessage("Phone notifications have been disabled on this device.");
       } catch {
         setMessage("We could not disable notifications. Please use your phone or browser notification settings.");
+      } finally {
+        setBusy(false);
       }
-      setBusy(false);
-    });
   }
 
   if (!supported) return <p className="mt-4 text-sm text-white/45">Push notifications are not supported by this browser.</p>;

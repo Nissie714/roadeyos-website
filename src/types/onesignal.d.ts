@@ -20,6 +20,7 @@ declare global {
 
   interface Window {
     OneSignalDeferred?: Array<(oneSignal: RoadeyosOneSignalSdk) => void | Promise<void>>;
+    roadeyosOneSignal?: RoadeyosOneSignalSdk;
     roadeyosOneSignalQueued?: boolean;
   }
 }

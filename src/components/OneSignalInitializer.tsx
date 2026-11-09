@@ -14,9 +14,11 @@ export default function OneSignalInitializer() {
       await OneSignal.init({
         appId,
         notifyButton: { enable: false },
-        serviceWorkerPath: "OneSignalSDKWorker.js",
+        serviceWorkerPath: "/OneSignalSDKWorker.js",
         serviceWorkerParam: { scope: "/" },
       });
+      window.roadeyosOneSignal = OneSignal;
+      window.dispatchEvent(new Event("roadeyos:onesignal-ready"));
     });
   }, []);
 
