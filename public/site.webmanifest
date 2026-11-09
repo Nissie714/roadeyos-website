@@ -1,6 +1,7 @@
 {
   "name": "Road-e-yo's Bootcamp & Fitness Centre",
   "short_name": "Road-e-yo's",
+  "id": "/",
   "description": "Book your Road-e-yo's Bootcamp and HYROX training sessions.",
   "start_url": "/",
   "display": "standalone",

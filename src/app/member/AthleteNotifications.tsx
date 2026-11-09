@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useState } from "react";
 import { createClient } from "@/lib/supabase/client";
+import PushNotificationControl from "./PushNotificationControl";
 
 type Notification = {
   id: string;
@@ -61,6 +62,8 @@ export default function AthleteNotifications() {
           </button>
         )}
       </div>
+
+      <PushNotificationControl />
 
       {message && <p role="status" className="mt-5 rounded-xl border border-red-400/30 bg-red-400/10 p-4 text-sm text-red-200">{message}</p>}
       {loading ? (

@@ -39,7 +39,7 @@ export default function PrivacyPolicyPage() {
 
       <section>
         <h2>Who processes information for us</h2>
-        <p>We use service providers to operate the website, including Supabase for authentication and database services, Netlify for website hosting and deployment, and email or payment providers when those facilities are used. They process information for us under their own security and data-processing arrangements and may operate internationally using appropriate safeguards.</p>
+        <p>We use service providers to operate the website, including Supabase for authentication and database services, Netlify for website hosting and deployment, OneSignal for optional phone push notifications, and email or payment providers when those facilities are used. They process information for us under their own security and data-processing arrangements and may operate internationally using appropriate safeguards.</p>
         <p>We do not sell your personal information.</p>
       </section>
 

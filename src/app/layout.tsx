@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import "./globals.css";
+import OneSignalInitializer from "@/components/OneSignalInitializer";
 
 export const metadata: Metadata = {
   title: "Road-e-yo's | Bootcamp & Fitness Centre",
@@ -32,7 +33,10 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className="h-full antialiased">
-      <body className="min-h-full flex flex-col">{children}</body>
+      <body className="min-h-full flex flex-col">
+        <OneSignalInitializer />
+        {children}
+      </body>
     </html>
   );
 }
