@@ -3,6 +3,7 @@
 import { FormEvent, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
+import PasswordVisibilityButton from "@/components/PasswordVisibilityButton";
 
 export default function AthleteLoginForm() {
   const router = useRouter();
@@ -152,20 +153,19 @@ export default function AthleteLoginForm() {
         </label>
         <label className="block">
           <span className="mb-2 block text-sm font-bold text-white/70">Password</span>
-          <input
-            required
-            minLength={8}
-            autoComplete={mode === "login" ? "current-password" : "new-password"}
-            type={showPassword ? "text" : "password"}
-            value={password}
-            onChange={(event) => setPassword(event.target.value)}
-            placeholder="At least 8 characters"
-            className="w-full rounded-xl border border-white/10 bg-white/[.04] px-4 py-4 text-white outline-none transition placeholder:text-white/25 focus:border-pink"
-          />
-          <span className="mt-3 flex items-center gap-2 text-sm text-white/60">
-            <input type="checkbox" checked={showPassword} onChange={(event) => setShowPassword(event.target.checked)} className="h-4 w-4 accent-pink" />
-            Show password
-          </span>
+          <div className="relative">
+            <input
+              required
+              minLength={8}
+              autoComplete={mode === "login" ? "current-password" : "new-password"}
+              type={showPassword ? "text" : "password"}
+              value={password}
+              onChange={(event) => setPassword(event.target.value)}
+              placeholder="At least 8 characters"
+              className="w-full rounded-xl border border-white/10 bg-white/[.04] py-4 pl-4 pr-14 text-white outline-none transition placeholder:text-white/25 focus:border-pink"
+            />
+            <PasswordVisibilityButton visible={showPassword} onToggle={() => setShowPassword((current) => !current)} />
+          </div>
         </label>
         {mode === "login" && (
           <button type="button" disabled={busy} onClick={() => void resetPassword()} className="text-sm font-bold text-pink underline-offset-4 hover:underline disabled:opacity-50">

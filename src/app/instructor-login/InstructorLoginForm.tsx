@@ -3,6 +3,7 @@
 import { FormEvent, useState } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
+import PasswordVisibilityButton from "@/components/PasswordVisibilityButton";
 
 export default function InstructorLoginForm() {
   const router = useRouter();
@@ -74,11 +75,10 @@ export default function InstructorLoginForm() {
       </label>
       <label className="block">
         <span className="mb-2 block text-sm font-bold text-white/70">Password</span>
-        <input required type={showPassword ? "text" : "password"} autoComplete="current-password" value={password} onChange={(event) => setPassword(event.target.value)} className="w-full rounded-xl border border-white/10 bg-white/[.04] px-4 py-4 outline-none focus:border-pink" />
-        <span className="mt-3 flex items-center gap-2 text-sm text-white/60">
-          <input type="checkbox" checked={showPassword} onChange={(event) => setShowPassword(event.target.checked)} className="h-4 w-4 accent-pink" />
-          Show password
-        </span>
+        <div className="relative">
+          <input required type={showPassword ? "text" : "password"} autoComplete="current-password" value={password} onChange={(event) => setPassword(event.target.value)} className="w-full rounded-xl border border-white/10 bg-white/[.04] py-4 pl-4 pr-14 outline-none focus:border-pink" />
+          <PasswordVisibilityButton visible={showPassword} onToggle={() => setShowPassword((current) => !current)} />
+        </div>
       </label>
       <button type="button" disabled={busy} onClick={() => void resetPassword()} className="text-sm font-bold text-pink underline-offset-4 hover:underline disabled:opacity-50">
         Forgot password?

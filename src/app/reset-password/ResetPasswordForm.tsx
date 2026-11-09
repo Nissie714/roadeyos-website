@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { FormEvent, useState } from "react";
 import { createClient } from "@/lib/supabase/client";
+import PasswordVisibilityButton from "@/components/PasswordVisibilityButton";
 
 export default function ResetPasswordForm() {
   const [password, setPassword] = useState("");
@@ -53,15 +54,17 @@ export default function ResetPasswordForm() {
         <form onSubmit={submit} className="mt-7 space-y-5">
           <label className="block">
             <span className="mb-2 block text-sm font-bold text-white/70">New password</span>
-            <input required minLength={8} type={showPassword ? "text" : "password"} autoComplete="new-password" value={password} onChange={(event) => setPassword(event.target.value)} className="w-full rounded-xl border border-white/10 bg-white/[.04] px-4 py-4 outline-none focus:border-pink" />
+            <div className="relative">
+              <input required minLength={8} type={showPassword ? "text" : "password"} autoComplete="new-password" value={password} onChange={(event) => setPassword(event.target.value)} className="w-full rounded-xl border border-white/10 bg-white/[.04] py-4 pl-4 pr-14 outline-none focus:border-pink" />
+              <PasswordVisibilityButton visible={showPassword} onToggle={() => setShowPassword((current) => !current)} />
+            </div>
           </label>
           <label className="block">
             <span className="mb-2 block text-sm font-bold text-white/70">Confirm new password</span>
-            <input required minLength={8} type={showPassword ? "text" : "password"} autoComplete="new-password" value={confirmPassword} onChange={(event) => setConfirmPassword(event.target.value)} className="w-full rounded-xl border border-white/10 bg-white/[.04] px-4 py-4 outline-none focus:border-pink" />
-          </label>
-          <label className="flex items-center gap-2 text-sm text-white/60">
-            <input type="checkbox" checked={showPassword} onChange={(event) => setShowPassword(event.target.checked)} className="h-4 w-4 accent-pink" />
-            Show passwords
+            <div className="relative">
+              <input required minLength={8} type={showPassword ? "text" : "password"} autoComplete="new-password" value={confirmPassword} onChange={(event) => setConfirmPassword(event.target.value)} className="w-full rounded-xl border border-white/10 bg-white/[.04] py-4 pl-4 pr-14 outline-none focus:border-pink" />
+              <PasswordVisibilityButton visible={showPassword} onToggle={() => setShowPassword((current) => !current)} />
+            </div>
           </label>
           <button disabled={busy} className="w-full rounded-full bg-pink px-6 py-4 font-black disabled:opacity-60">
             {busy ? "Updating password…" : "Save new password"}
