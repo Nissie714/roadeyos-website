@@ -165,6 +165,8 @@ export default function Home() {
               <span className="pill">All abilities</span>
               <span className="pill">Group training</span>
               <span className="pill">£8 PAYG</span>
+              <span className="pill">Clean indoor shoes</span>
+              <span className="pill">Bring water</span>
             </div>
           </article>
           <article className="class-card dark-card">
@@ -176,9 +178,10 @@ export default function Home() {
               comfortable working hard on tired legs—and proud of what you achieve.
             </p>
             <div className="mt-8 flex flex-wrap gap-2">
-              <span className="pill">60 minutes</span>
               <span className="pill">Clean indoor shoes</span>
               <span className="pill">Bring water</span>
+              <span className="pill">£8 PAYG</span>
+              <span className="pill">Group training</span>
             </div>
           </article>
         </div>
