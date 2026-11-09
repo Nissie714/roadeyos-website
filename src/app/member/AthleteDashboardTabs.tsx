@@ -3,13 +3,15 @@
 import { useState } from "react";
 import ProfileNameForm from "@/components/ProfileNameForm";
 import ClassBookingManager from "./ClassBookingManager";
+import AthleteNotifications from "./AthleteNotifications";
 
-type DashboardTab = "details" | "bookings" | "calendar";
+type DashboardTab = "details" | "bookings" | "calendar" | "notifications";
 
 const tabs: Array<{ id: DashboardTab; label: string }> = [
   { id: "details", label: "Your details" },
   { id: "bookings", label: "Upcoming bookings" },
   { id: "calendar", label: "Live class calendar" },
+  { id: "notifications", label: "Class updates" },
 ];
 
 export default function AthleteDashboardTabs() {
@@ -47,6 +49,7 @@ export default function AthleteDashboardTabs() {
         )}
         {activeTab === "bookings" && <ClassBookingManager view="upcoming" />}
         {activeTab === "calendar" && <ClassBookingManager view="calendar" />}
+        {activeTab === "notifications" && <AthleteNotifications />}
       </div>
     </div>
   );
