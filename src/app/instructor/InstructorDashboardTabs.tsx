@@ -5,13 +5,15 @@ import ProfileNameForm from "@/components/ProfileNameForm";
 import InstructorBroadcast from "./InstructorBroadcast";
 import InstructorPasswordForm from "./InstructorPasswordForm";
 import InstructorRoster from "./InstructorRoster";
+import MonthlyMembers from "./MonthlyMembers";
 
-type InstructorTab = "details" | "push" | "classes";
+type InstructorTab = "details" | "push" | "classes" | "memberships";
 
 const tabs: Array<{ id: InstructorTab; label: string }> = [
   { id: "details", label: "Your details" },
-  { id: "push", label: "Push Message" },
+  { id: "push", label: "Notification" },
   { id: "classes", label: "Classes" },
+  { id: "memberships", label: "Monthly members" },
 ];
 
 export default function InstructorDashboardTabs() {
@@ -44,6 +46,7 @@ export default function InstructorDashboardTabs() {
         )}
         {activeTab === "push" && <InstructorBroadcast />}
         {activeTab === "classes" && <InstructorRoster />}
+        {activeTab === "memberships" && <MonthlyMembers />}
       </div>
     </div>
   );

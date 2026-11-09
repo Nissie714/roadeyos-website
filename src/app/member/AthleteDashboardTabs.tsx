@@ -5,13 +5,15 @@ import ProfileNameForm from "@/components/ProfileNameForm";
 import ClassBookingManager from "./ClassBookingManager";
 import AthleteNotifications from "./AthleteNotifications";
 import InstructorPasswordForm from "../instructor/InstructorPasswordForm";
+import MembershipDetails from "./MembershipDetails";
 
-type DashboardTab = "details" | "bookings" | "calendar" | "notifications";
+type DashboardTab = "details" | "bookings" | "calendar" | "membership" | "notifications";
 
 const tabs: Array<{ id: DashboardTab; label: string }> = [
   { id: "details", label: "Your details" },
   { id: "bookings", label: "Upcoming bookings" },
   { id: "calendar", label: "Live class calendar" },
+  { id: "membership", label: "Membership" },
   { id: "notifications", label: "NOTIFICATION" },
 ];
 
@@ -51,6 +53,7 @@ export default function AthleteDashboardTabs() {
         )}
         {activeTab === "bookings" && <ClassBookingManager view="upcoming" />}
         {activeTab === "calendar" && <ClassBookingManager view="calendar" />}
+        {activeTab === "membership" && <MembershipDetails />}
         {activeTab === "notifications" && <AthleteNotifications />}
       </div>
     </div>
