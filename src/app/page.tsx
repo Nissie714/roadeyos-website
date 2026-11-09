@@ -430,8 +430,12 @@ export default function Home() {
             </div>
           </div>
         </div>
-        <div className="section-shell mt-14 border-t border-white/10 pt-7 text-sm text-white/35">
-          © {new Date().getFullYear()} Road-e-yo&apos;s Bootcamp &amp; Fitness Centre.
+        <div className="section-shell mt-14 flex flex-col gap-3 border-t border-white/10 pt-7 text-sm text-white/35 sm:flex-row sm:items-center sm:justify-between">
+          <p>© {new Date().getFullYear()} Road-e-yo&apos;s Bootcamp &amp; Fitness Centre.</p>
+          <div className="flex gap-5 text-xs">
+            <a className="transition hover:text-pink" href="/privacy-policy">Privacy Policy</a>
+            <a className="transition hover:text-pink" href="/terms-and-conditions">Terms &amp; Conditions</a>
+          </div>
         </div>
       </footer>
     </main>
