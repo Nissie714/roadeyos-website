@@ -341,14 +341,15 @@ export default function Home() {
               <h2 className="section-title">Built by the community.</h2>
               <p className="section-copy">
                 Unit 11 is where an incredible chapter of our story was written.
-                The hard work, friendships and community created there helped us
-                grow into our bigger and better home at Unit 3.
+                We invested to bring the gym into the 21st century with more
+                equipment and a whole new appearance.
               </p>
               <p className="section-copy">
-                Our time at Unit 11 came to an unexpected end following a
-                terrible fire in the neighbouring unit. The building was
-                condemned, which meant we had to move—but the strength of our
-                community helped us begin a new chapter at Unit 3.
+                However, our time there came to an unexpected end following a
+                terrible fire that condemned the building, and we were forced to
+                move. With some time and patience, we found and rebuilt our vision
+                into Unit 3. We could not have achieved any of this without our
+                wonderful Bootcamp family.
               </p>
             </div>
           </div>
