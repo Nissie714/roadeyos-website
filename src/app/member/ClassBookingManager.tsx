@@ -33,8 +33,9 @@ function formatTime(value: string) {
   }).format(new Date(value));
 }
 
-export default function ClassBookingManager() {
+export default function ClassBookingManager({ view }: { view: "upcoming" | "calendar" }) {
   const [sessions, setSessions] = useState<Session[]>([]);
+  const [calendarSessions, setCalendarSessions] = useState<Session[]>([]);
   const [loading, setLoading] = useState(true);
   const [workingId, setWorkingId] = useState<string | null>(null);
   const [message, setMessage] = useState("");
@@ -52,8 +53,13 @@ export default function ClassBookingManager() {
       setIsError(true);
       setMessage("Class bookings are temporarily unavailable. Please contact Road-e-yo's if you need help booking.");
       setSessions([]);
+      setCalendarSessions([]);
     } else {
-      setSessions((data ?? []) as Session[]);
+      const loadedSessions = (data ?? []) as Session[];
+      const bookingWindowEnds = new Date();
+      bookingWindowEnds.setDate(bookingWindowEnds.getDate() + 14);
+      setSessions(loadedSessions);
+      setCalendarSessions(loadedSessions.filter((session) => new Date(session.starts_at) <= bookingWindowEnds));
     }
     setAttendees(attendeeResult.error ? [] : ((attendeeResult.data ?? []) as Attendee[]));
     setLoading(false);
@@ -107,7 +113,7 @@ export default function ClassBookingManager() {
 
   return (
     <>
-      <section className="mt-8 rounded-[2rem] border border-white/10 bg-[#101010] p-5 sm:p-8">
+      {view === "upcoming" && <section className="mt-8 rounded-[2rem] border border-white/10 bg-[#101010] p-5 sm:p-8">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <h2 className="text-xl font-black uppercase">Upcoming bookings</h2>
           <span className="text-sm font-bold text-pink">{myBookings.length} booked</span>
@@ -138,13 +144,15 @@ export default function ClassBookingManager() {
         )}
       </section>
 
-      <section className="mt-8 rounded-[2rem] border border-white/10 bg-[#101010] p-5 sm:p-8">
+      }
+
+      {view === "calendar" && <section className="mt-8 rounded-[2rem] border border-white/10 bg-[#101010] p-5 sm:p-8">
       <div className="flex flex-col justify-between gap-5 sm:flex-row sm:items-end">
         <div>
           <p className="text-sm font-black uppercase tracking-widest text-pink">Live class calendar</p>
           <h2 className="mt-2 text-3xl font-black uppercase tracking-tight">Book your training</h2>
           <p className="mt-3 text-sm leading-6 text-white/50">
-            Choose an available class. Every session is limited to 25 athletes.
+            Choose an available class from the next two weeks. Every session is limited to 25 athletes.
           </p>
         </div>
         <span className="w-fit rounded-full border border-emerald-400/35 bg-emerald-400/10 px-4 py-2 text-xs font-black text-emerald-300">
@@ -160,13 +168,13 @@ export default function ClassBookingManager() {
 
       {loading ? (
         <p className="mt-8 text-sm text-white/50">Loading available classes…</p>
-      ) : sessions.length === 0 && !isError ? (
+      ) : calendarSessions.length === 0 && !isError ? (
         <p className="mt-8 rounded-xl border border-white/10 bg-black/25 p-5 text-sm text-white/50">
           There are no upcoming classes available to book yet.
         </p>
       ) : (
         <div className="mt-6 grid gap-3">
-          {sessions.map((session) => {
+          {calendarSessions.map((session) => {
             const spaces = Math.max(0, session.capacity - session.booked_count);
             const busy = workingId === session.id;
             return (
@@ -203,6 +211,7 @@ export default function ClassBookingManager() {
         Group sessions must be cancelled at least 12 hours before the class begins.
       </p>
       </section>
+      }
     </>
   );
 }

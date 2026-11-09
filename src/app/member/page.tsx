@@ -1,10 +1,9 @@
 import Image from "next/image";
 import Link from "next/link";
-import ClassBookingManager from "./ClassBookingManager";
+import AthleteDashboardTabs from "./AthleteDashboardTabs";
 import SignOutButton from "./SignOutButton";
 import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
-import ProfileNameForm from "@/components/ProfileNameForm";
 
 export const metadata = {
   title: "Athlete Account | Road-e-yo's",
@@ -42,16 +41,7 @@ export default async function MemberPage() {
           </div>
         </div>
 
-        <ProfileNameForm />
-
-        <section className="mt-8 rounded-[2rem] border border-white/10 bg-[#101010] p-6">
-          <p className="text-xs font-black uppercase tracking-widest text-pink">Cancellation policy</p>
-          <p className="mt-4 text-sm leading-6 text-white/55">
-            Group bookings require 12 hours&apos; notice. Contact Road-e-yo&apos;s directly if you need help with a late cancellation.
-          </p>
-        </section>
-
-        <ClassBookingManager />
+        <AthleteDashboardTabs />
       </div>
     </main>
   );
