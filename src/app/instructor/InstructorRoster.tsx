@@ -44,7 +44,12 @@ export default function InstructorRoster() {
 
   const sessions = useMemo(() => {
     const grouped = new Map<string, { session: RosterRow; athletes: RosterRow[] }>();
+    const now = new Date();
+    const twoWeeksFromNow = new Date(now);
+    twoWeeksFromNow.setDate(twoWeeksFromNow.getDate() + 14);
     for (const row of rows) {
+      const startsAt = new Date(row.starts_at);
+      if (startsAt < now || startsAt > twoWeeksFromNow) continue;
       const entry = grouped.get(row.session_id) ?? { session: row, athletes: [] };
       if (row.booking_id) entry.athletes.push(row);
       grouped.set(row.session_id, entry);
@@ -101,7 +106,13 @@ export default function InstructorRoster() {
 
   return (
     <div className="mt-10 grid gap-5">
+      <div>
+        <p className="eyebrow">Rolling two-week calendar</p>
+        <h2 className="mt-2 text-2xl font-black uppercase">Upcoming classes</h2>
+        <p className="mt-2 text-sm text-white/50">Only sessions taking place within the next 14 days are shown.</p>
+      </div>
       {message && <p role="status" className="rounded-xl border border-pink/30 bg-pink/10 p-4 text-sm font-bold text-pink">{message}</p>}
+      {!sessions.length && <p className="rounded-2xl border border-white/10 bg-[#101010] p-6 text-sm text-white/45">There are no scheduled classes in the next 14 days.</p>}
       {sessions.map(({ session, athletes }) => (
         <section key={session.session_id} className="rounded-[2rem] border border-white/10 bg-[#101010] p-5 sm:p-7">
           <div className="flex flex-wrap items-start justify-between gap-4">

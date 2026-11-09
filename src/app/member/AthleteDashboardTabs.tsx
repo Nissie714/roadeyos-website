@@ -4,6 +4,7 @@ import { useState } from "react";
 import ProfileNameForm from "@/components/ProfileNameForm";
 import ClassBookingManager from "./ClassBookingManager";
 import AthleteNotifications from "./AthleteNotifications";
+import InstructorPasswordForm from "../instructor/InstructorPasswordForm";
 
 type DashboardTab = "details" | "bookings" | "calendar" | "notifications";
 
@@ -39,6 +40,7 @@ export default function AthleteDashboardTabs() {
         {activeTab === "details" && (
           <>
             <ProfileNameForm />
+            <InstructorPasswordForm />
             <section className="mt-8 rounded-[2rem] border border-white/10 bg-[#101010] p-6">
               <p className="text-xs font-black uppercase tracking-widest text-pink">Cancellation policy</p>
               <p className="mt-4 text-sm leading-6 text-white/55">

@@ -23,10 +23,7 @@ begin
 
   insert into public.class_notifications (user_id, session_id, title, message)
   select p.id, null, 'Road-e-yo''s update', v_message
-  from public.profiles p
-  where not exists (
-    select 1 from public.instructor_users i where i.user_id = p.id
-  );
+  from public.profiles p;
 
   get diagnostics v_count = row_count;
   return v_count;
