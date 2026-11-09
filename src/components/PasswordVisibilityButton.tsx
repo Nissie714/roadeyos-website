@@ -12,7 +12,7 @@ export default function PasswordVisibilityButton({ visible, onToggle }: Password
       onClick={onToggle}
       aria-label={label}
       title={label}
-      className="absolute right-3 top-1/2 grid h-10 w-10 -translate-y-1/2 place-items-center rounded-full text-white/55 transition hover:bg-white/10 hover:text-pink focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-pink"
+      className="absolute right-2 top-1/2 grid h-11 w-11 -translate-y-1/2 place-items-center rounded-full border-2 border-white/35 bg-pink text-white shadow-[0_0_0_3px_rgba(255,46,136,0.16)] transition hover:scale-105 hover:bg-[#ff4d9a] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
     >
       {visible ? (
         <span aria-hidden="true" className="translate-y-0.5 text-lg font-black tracking-[-0.08em]">***</span>
