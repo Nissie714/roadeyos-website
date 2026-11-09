@@ -234,7 +234,7 @@ export default function Home() {
           </h2>
         </div>
         <div className="mt-10 grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-          <article className="price-card">
+          <article className="price-card featured-price">
             <p className="price-label">Pay as you go</p>
             <p className="price">£8</p>
             <p className="price-note">Any group session</p>
@@ -244,12 +244,12 @@ export default function Home() {
             <p className="price">£60</p>
             <p className="price-note">Per month · group sessions and gym use</p>
           </article>
-          <article className="price-card">
+          <article className="price-card featured-price">
             <p className="price-label">Private 1:1</p>
             <p className="price">£35</p>
             <p className="price-note">One hour · pay as you go</p>
           </article>
-          <article className="price-card">
+          <article className="price-card featured-price">
             <p className="price-label">Ten 1:1 sessions</p>
             <p className="price">£250</p>
             <p className="price-note">Three-month expiry</p>
