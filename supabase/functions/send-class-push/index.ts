@@ -1,7 +1,7 @@
 import "jsr:@supabase/functions-js/edge-runtime.d.ts";
 import { withSupabase } from "jsr:@supabase/server@1";
 
-const appId = "91df97a2-947c-4ebc-a026-3ebc004ecf8b";
+const appId = "91df97a2-947c-4ebc-a026-3ebc04ecf8b1";
 const websiteUrl = "https://roadeyos-website.netlify.app/member";
 
 export default {

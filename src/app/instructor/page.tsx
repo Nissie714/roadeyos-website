@@ -5,6 +5,7 @@ import { createClient } from "@/lib/supabase/server";
 import InstructorRoster from "./InstructorRoster";
 import InstructorSignOut from "./InstructorSignOut";
 import ProfileNameForm from "@/components/ProfileNameForm";
+import InstructorBroadcast from "./InstructorBroadcast";
 
 export const metadata = { title: "Instructor Dashboard | Road-e-yo's" };
 
@@ -28,6 +29,7 @@ export default async function InstructorPage() {
         <h1 className="mt-3 text-5xl font-black uppercase tracking-[-.05em] sm:text-6xl">Class rosters.</h1>
         <p className="mt-4 text-white/55">Signed in as {user.email}</p>
         <ProfileNameForm />
+        <InstructorBroadcast />
         <InstructorRoster />
       </div>
     </main>

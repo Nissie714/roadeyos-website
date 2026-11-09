@@ -3,7 +3,7 @@
 import Script from "next/script";
 import { useEffect } from "react";
 
-const appId = "91df97a2-947c-4ebc-a026-3ebc004ecf8b";
+const appId = "91df97a2-947c-4ebc-a026-3ebc04ecf8b1";
 
 export default function OneSignalInitializer() {
   useEffect(() => {
