@@ -81,7 +81,7 @@ export default function ClassBookingManager({ view }: { view: "upcoming" | "cale
   async function book(session: Session) {
     if (healthStatus !== "self_declared_fit") {
       setIsError(true);
-      setMessage(healthStatus === "advice_required" ? "You need appropriate health advice or clearance before you can book a class." : "Please complete and sign the health declaration in Your details before booking a class.");
+      setMessage(healthStatus === "advice_required" ? "Class booking is locked because your PAR-Q identified a health matter. Please contact Yolanda to discuss suitable exercise options." : "Please complete and sign the PAR-Q health declaration in Your details before booking a class.");
       return;
     }
     setWorkingId(session.id);
@@ -176,11 +176,11 @@ export default function ClassBookingManager({ view }: { view: "upcoming" | "cale
 
       {!loading && healthStatus !== "self_declared_fit" && (
         <div className="mt-6 rounded-2xl border border-amber-300/35 bg-amber-300/10 p-5">
-          <p className="font-black text-amber-100">Health declaration required</p>
+          <p className="font-black text-amber-100">PAR-Q required before booking</p>
           <p className="mt-2 text-sm leading-6 text-white/60">
             {healthStatus === "advice_required"
-              ? "Your answers indicate that you should obtain appropriate advice or clearance before taking part. Class booking is currently locked."
-              : "Open the Your details tab and complete the signed health declaration before booking your first class."}
+              ? "Your PAR-Q identified a health matter, so class booking is locked. Please contact Yolanda to discuss safe and suitable exercise options."
+              : "Open the Your details tab and complete every PAR-Q question, tick the declaration and digitally sign it before booking your first class."}
           </p>
         </div>
       )}
@@ -216,7 +216,7 @@ export default function ClassBookingManager({ view }: { view: "upcoming" | "cale
                     </button>
                   ) : (
                     <button disabled={busy || spaces === 0 || healthStatus !== "self_declared_fit"} onClick={() => void book(session)} className="rounded-full bg-pink px-5 py-2 text-xs font-black transition enabled:hover:bg-[#ff3b91] disabled:cursor-not-allowed disabled:bg-white/10 disabled:text-white/35">
-                      {busy ? "Booking…" : spaces === 0 ? "Class full" : healthStatus !== "self_declared_fit" ? "Declaration required" : "Book class"}
+                      {busy ? "Booking…" : spaces === 0 ? "Class full" : healthStatus !== "self_declared_fit" ? "PAR-Q required" : "Book class"}
                     </button>
                   )}
                 </div>

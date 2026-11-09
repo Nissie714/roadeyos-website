@@ -106,7 +106,7 @@ begin
     select 1 from public.health_declarations
     where user_id = auth.uid() and declaration_status = 'self_declared_fit'
   ) then
-    raise exception 'A signed fit-to-participate health declaration is required before booking.';
+    raise exception 'A completed fit-to-participate PAR-Q is required before booking. If your PAR-Q identified a health matter, please contact Yolanda to discuss suitable exercise options.';
   end if;
 
   select capacity into v_capacity

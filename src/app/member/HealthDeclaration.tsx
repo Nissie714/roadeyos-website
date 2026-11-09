@@ -77,7 +77,7 @@ export default function HealthDeclaration() {
         declaration_status: hasYesAnswer ? "advice_required" : "self_declared_fit",
         signed_at: String(data),
       });
-      setMessage(hasYesAnswer ? "Your declaration has been saved. Please seek appropriate advice before taking part." : "Your signed health declaration has been saved.");
+      setMessage(hasYesAnswer ? "Your PAR-Q has been saved. Class booking is locked. Please contact Yolanda to discuss suitable exercise options." : "Your signed PAR-Q health declaration has been saved. You can now book classes.");
       setSignature("");
       setConfirmed(false);
     }
@@ -89,7 +89,7 @@ export default function HealthDeclaration() {
   return (
     <section className="mt-8 rounded-[2rem] border border-white/10 bg-[#101010] p-5 sm:p-7">
       <p className="text-xs font-black uppercase tracking-widest text-pink">Pre-exercise screening</p>
-      <h2 className="mt-2 text-2xl font-black uppercase">Health declaration</h2>
+      <h2 className="mt-2 text-2xl font-black uppercase">PAR-Q health declaration</h2>
       <p className="mt-3 max-w-3xl text-sm leading-6 text-white/55">
         Please answer honestly before taking part in a Road-e-yo&apos;s session. This screening does not provide a diagnosis or replace advice from a doctor or other qualified healthcare professional.
       </p>
@@ -134,7 +134,7 @@ export default function HealthDeclaration() {
 
         {allAnswered && hasYesAnswer && (
           <div className="mt-5 rounded-2xl border border-amber-300/35 bg-amber-300/10 p-5 text-sm leading-6 text-amber-100">
-            One or more answers suggest that you should seek advice before taking part. A “Yes” answer is not a diagnosis, but you should contact Road-e-yo&apos;s and consult an appropriate healthcare or exercise professional before exercising. You can also use the official PAR-Q+ pathway below.
+            One or more answers indicate a health matter that needs to be discussed before you take part. Class booking will remain locked. Please contact Yolanda to discuss safe and suitable exercise options and, where appropriate, seek advice from a qualified healthcare professional. You can also use the official PAR-Q+ pathway below.
           </div>
         )}
 
@@ -143,7 +143,7 @@ export default function HealthDeclaration() {
             <input type="checkbox" checked={confirmed} onChange={(event) => setConfirmed(event.target.checked)} className="mt-1 h-5 w-5 shrink-0 accent-pink" />
             <span className="text-sm font-bold leading-6">
               {hasYesAnswer
-                ? "I confirm that my answers are accurate and I understand that I should seek appropriate advice or clearance before taking part."
+                ? "I confirm that my answers are accurate. I understand that I cannot book a class until I have contacted Yolanda to discuss suitable exercise options and any appropriate clearance."
                 : "I confirm that my answers are accurate and, to the best of my knowledge, I am fit and healthy to take part in Road-e-yo's sessions."}
             </span>
           </label>
