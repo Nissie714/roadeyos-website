@@ -6,6 +6,7 @@ import ClassBookingManager from "./ClassBookingManager";
 import AthleteNotifications from "./AthleteNotifications";
 import InstructorPasswordForm from "../instructor/InstructorPasswordForm";
 import MembershipDetails from "./MembershipDetails";
+import HealthDeclaration from "./HealthDeclaration";
 
 type DashboardTab = "details" | "bookings" | "calendar" | "membership" | "notifications";
 
@@ -42,6 +43,7 @@ export default function AthleteDashboardTabs() {
         {activeTab === "details" && (
           <>
             <ProfileNameForm />
+            <HealthDeclaration />
             <InstructorPasswordForm />
             <section className="mt-8 rounded-[2rem] border border-white/10 bg-[#101010] p-6">
               <p className="text-xs font-black uppercase tracking-widest text-pink">Cancellation policy</p>

@@ -41,12 +41,14 @@ export default function ClassBookingManager({ view }: { view: "upcoming" | "cale
   const [message, setMessage] = useState("");
   const [isError, setIsError] = useState(false);
   const [attendees, setAttendees] = useState<Attendee[]>([]);
+  const [healthStatus, setHealthStatus] = useState<"self_declared_fit" | "advice_required" | null>(null);
 
   const loadSessions = useCallback(async () => {
     const supabase = createClient();
-    const [{ data, error }, attendeeResult] = await Promise.all([
+    const [{ data, error }, attendeeResult, healthResult] = await Promise.all([
       supabase.rpc("get_upcoming_sessions"),
       supabase.rpc("get_my_class_attendees"),
+      supabase.rpc("get_my_health_declaration"),
     ]);
 
     if (error) {
@@ -62,6 +64,7 @@ export default function ClassBookingManager({ view }: { view: "upcoming" | "cale
       setCalendarSessions(loadedSessions.filter((session) => new Date(session.starts_at) <= bookingWindowEnds));
     }
     setAttendees(attendeeResult.error ? [] : ((attendeeResult.data ?? []) as Attendee[]));
+    setHealthStatus(healthResult.error ? null : (healthResult.data?.[0]?.declaration_status ?? null));
     setLoading(false);
   }, []);
 
@@ -76,6 +79,11 @@ export default function ClassBookingManager({ view }: { view: "upcoming" | "cale
   );
 
   async function book(session: Session) {
+    if (healthStatus !== "self_declared_fit") {
+      setIsError(true);
+      setMessage(healthStatus === "advice_required" ? "You need appropriate health advice or clearance before you can book a class." : "Please complete and sign the health declaration in Your details before booking a class.");
+      return;
+    }
     setWorkingId(session.id);
     setMessage("");
     setIsError(false);
@@ -166,6 +174,17 @@ export default function ClassBookingManager({ view }: { view: "upcoming" | "cale
         </p>
       )}
 
+      {!loading && healthStatus !== "self_declared_fit" && (
+        <div className="mt-6 rounded-2xl border border-amber-300/35 bg-amber-300/10 p-5">
+          <p className="font-black text-amber-100">Health declaration required</p>
+          <p className="mt-2 text-sm leading-6 text-white/60">
+            {healthStatus === "advice_required"
+              ? "Your answers indicate that you should obtain appropriate advice or clearance before taking part. Class booking is currently locked."
+              : "Open the Your details tab and complete the signed health declaration before booking your first class."}
+          </p>
+        </div>
+      )}
+
       {loading ? (
         <p className="mt-8 text-sm text-white/50">Loading available classes…</p>
       ) : calendarSessions.length === 0 && !isError ? (
@@ -196,8 +215,8 @@ export default function ClassBookingManager({ view }: { view: "upcoming" | "cale
                       {busy ? "Cancelling…" : "Cancel booking"}
                     </button>
                   ) : (
-                    <button disabled={busy || spaces === 0} onClick={() => void book(session)} className="rounded-full bg-pink px-5 py-2 text-xs font-black transition enabled:hover:bg-[#ff3b91] disabled:cursor-not-allowed disabled:bg-white/10 disabled:text-white/35">
-                      {busy ? "Booking…" : spaces === 0 ? "Class full" : "Book class"}
+                    <button disabled={busy || spaces === 0 || healthStatus !== "self_declared_fit"} onClick={() => void book(session)} className="rounded-full bg-pink px-5 py-2 text-xs font-black transition enabled:hover:bg-[#ff3b91] disabled:cursor-not-allowed disabled:bg-white/10 disabled:text-white/35">
+                      {busy ? "Booking…" : spaces === 0 ? "Class full" : healthStatus !== "self_declared_fit" ? "Declaration required" : "Book class"}
                     </button>
                   )}
                 </div>
