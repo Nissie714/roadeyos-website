@@ -12,7 +12,7 @@ const tabs: Array<{ id: DashboardTab; label: string }> = [
   { id: "details", label: "Your details" },
   { id: "bookings", label: "Upcoming bookings" },
   { id: "calendar", label: "Live class calendar" },
-  { id: "notifications", label: "Class updates" },
+  { id: "notifications", label: "NOTIFICATION" },
 ];
 
 export default function AthleteDashboardTabs() {
