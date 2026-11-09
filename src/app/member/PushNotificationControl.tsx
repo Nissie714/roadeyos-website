@@ -42,32 +42,46 @@ export default function PushNotificationControl() {
     }).catch(() => setMessage("Phone notifications are temporarily unavailable. Please refresh the page and try again."));
   }, []);
 
-  async function registerSubscription(oneSignal: RoadeyosOneSignalSdk) {
-    const subscriptionId = oneSignal.User.PushSubscription.id;
-    if (!subscriptionId) return false;
+  async function waitForSubscriptionId(oneSignal: RoadeyosOneSignalSdk) {
+    for (let attempt = 0; attempt < 20; attempt += 1) {
+      const subscriptionId = oneSignal.User.PushSubscription.id;
+      if (subscriptionId) return subscriptionId;
+      await new Promise((resolve) => window.setTimeout(resolve, 500));
+    }
+    throw new Error("OneSignal did not create a device subscription");
+  }
+
+  async function registerSubscription(subscriptionId: string) {
     const supabase = createClient();
     const { error } = await supabase.rpc("register_push_subscription", { p_subscription_id: subscriptionId });
     if (error) throw error;
-    return true;
   }
 
   async function enableNotifications() {
     setBusy(true);
     setMessage("");
+    let stage = "loading OneSignal";
     try {
         const OneSignal = await getOneSignal();
+        stage = "requesting browser permission";
         await OneSignal.Notifications.requestPermission();
         if (!OneSignal.Notifications.permission) {
           setMessage("Notifications were not allowed. You can change this in your phone or browser settings.");
           return;
         }
-        await OneSignal.User.PushSubscription.optIn();
-        await new Promise((resolve) => window.setTimeout(resolve, 800));
-        const registered = await registerSubscription(OneSignal);
-        setEnabled(registered);
-        setMessage(registered ? "Phone notifications are enabled for class changes." : "Permission was granted, but setup is still completing. Please press Enable again.");
-      } catch {
-        setMessage("We could not enable phone notifications. Please try again.");
+        stage = "creating the phone subscription";
+        if (!OneSignal.User.PushSubscription.optedIn) {
+          await OneSignal.User.PushSubscription.optIn();
+        }
+        const subscriptionId = await waitForSubscriptionId(OneSignal);
+        stage = "saving the subscription";
+        await registerSubscription(subscriptionId);
+        setEnabled(true);
+        setMessage("Phone notifications are enabled for class changes.");
+      } catch (error) {
+        const detail = error instanceof Error ? error.message : "unknown error";
+        console.error(`Push notification setup failed while ${stage}`, error);
+        setMessage(`Setup failed while ${stage}: ${detail.slice(0, 180)}`);
       } finally {
         setBusy(false);
       }
