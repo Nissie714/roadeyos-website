@@ -10,11 +10,39 @@ export default function AthleteLoginForm() {
   const [mode, setMode] = useState<"login" | "signup">("login");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [busy, setBusy] = useState(false);
   const [message, setMessage] = useState(searchParams.get("message") ?? "");
   const [isError, setIsError] = useState(Boolean(searchParams.get("message")));
+
+  async function resetPassword() {
+    if (!email.trim()) {
+      setIsError(true);
+      setMessage("Enter your email address first, then select Forgot password.");
+      return;
+    }
+
+    setBusy(true);
+    setMessage("");
+    setIsError(false);
+    const supabase = createClient();
+    const { error } = await supabase.auth.resetPasswordForEmail(email.trim(), {
+      redirectTo: `${window.location.origin}/auth/callback?next=/reset-password`,
+    });
+    setBusy(false);
+
+    if (error) {
+      setIsError(true);
+      setMessage(error.message.toLowerCase().includes("rate limit")
+        ? "Too many reset emails have been requested. Please wait and try again later."
+        : "We could not send the reset email. Please check the address and try again.");
+      return;
+    }
+
+    setMessage("If an account exists for that email address, a password-reset link has been sent.");
+  }
 
   async function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -128,13 +156,22 @@ export default function AthleteLoginForm() {
             required
             minLength={8}
             autoComplete={mode === "login" ? "current-password" : "new-password"}
-            type="password"
+            type={showPassword ? "text" : "password"}
             value={password}
             onChange={(event) => setPassword(event.target.value)}
             placeholder="At least 8 characters"
             className="w-full rounded-xl border border-white/10 bg-white/[.04] px-4 py-4 text-white outline-none transition placeholder:text-white/25 focus:border-pink"
           />
+          <span className="mt-3 flex items-center gap-2 text-sm text-white/60">
+            <input type="checkbox" checked={showPassword} onChange={(event) => setShowPassword(event.target.checked)} className="h-4 w-4 accent-pink" />
+            Show password
+          </span>
         </label>
+        {mode === "login" && (
+          <button type="button" disabled={busy} onClick={() => void resetPassword()} className="text-sm font-bold text-pink underline-offset-4 hover:underline disabled:opacity-50">
+            Forgot password?
+          </button>
+        )}
         <button
           disabled={busy}
           className="w-full rounded-full bg-pink px-6 py-4 font-black text-white transition hover:bg-[#ff4d9a] disabled:cursor-wait disabled:opacity-60"
