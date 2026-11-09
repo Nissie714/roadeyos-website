@@ -1,23 +1,19 @@
 import "jsr:@supabase/functions-js/edge-runtime.d.ts";
-import { createClient } from "npm:@supabase/supabase-js@2";
+import { withSupabase } from "jsr:@supabase/server@1";
 
 const appId = "91df97a2-947c-4ebc-a026-3ebc004ecf8b";
 const websiteUrl = "https://roadeyos-website.netlify.app/member";
 
-Deno.serve(async (request) => {
-  try {
+export default {
+  fetch: withSupabase({ auth: "secret" }, async (request, ctx) => {
+    try {
     const payload = await request.json();
     const notification = payload.record;
     if (!notification?.user_id || !notification?.title || !notification?.message) {
       return Response.json({ error: "Invalid notification payload" }, { status: 400 });
     }
 
-    const supabase = createClient(
-      Deno.env.get("SUPABASE_URL")!,
-      Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!,
-    );
-
-    const { data, error } = await supabase
+    const { data, error } = await ctx.supabaseAdmin
       .from("push_subscriptions")
       .select("subscription_id")
       .eq("user_id", notification.user_id)
@@ -46,7 +42,8 @@ Deno.serve(async (request) => {
     const result = await response.json();
     if (!response.ok) return Response.json(result, { status: response.status });
     return Response.json({ sent: subscriptionIds.length, result });
-  } catch (error) {
-    return Response.json({ error: error instanceof Error ? error.message : "Unknown error" }, { status: 500 });
-  }
-});
+    } catch (error) {
+      return Response.json({ error: error instanceof Error ? error.message : "Unknown error" }, { status: 500 });
+    }
+  }),
+};
