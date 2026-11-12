@@ -4,6 +4,7 @@ import AthleteDashboardTabs from "./AthleteDashboardTabs";
 import SignOutButton from "./SignOutButton";
 import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
+import MembershipOverdueBanner from "./MembershipOverdueBanner";
 
 export const metadata = {
   title: "Athlete Account | Road-e-yo's",
@@ -38,6 +39,7 @@ export default async function MemberPage() {
               Hello, athlete.
             </h1>
             <p className="mt-4 text-white/55">Signed in as {user.email}</p>
+            <MembershipOverdueBanner />
           </div>
         </div>
 

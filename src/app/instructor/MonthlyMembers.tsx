@@ -9,7 +9,21 @@ type RegisteredMember = {
   email: string;
   membership_started_on: string | null;
   renewal_due_on: string | null;
+  last_due_notification_on: string | null;
 };
+
+function localDateKey(date: Date) {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const day = String(date.getDate()).padStart(2, "0");
+  return `${year}-${month}-${day}`;
+}
+
+function daysOverdue(dateKey: string) {
+  const due = Date.parse(`${dateKey}T00:00:00Z`);
+  const today = Date.parse(`${localDateKey(new Date())}T00:00:00Z`);
+  return Math.max(0, Math.round((today - due) / 86_400_000));
+}
 
 export default function MonthlyMembers() {
   const [members, setMembers] = useState<RegisteredMember[]>([]);
@@ -102,20 +116,32 @@ export default function MonthlyMembers() {
         <h3 className="text-lg font-black uppercase">Current monthly members</h3>
         {monthlyMembers.length ? (
           <div className="mt-4 grid gap-3">
-            {monthlyMembers.map((member) => (
-              <div key={member.user_id} className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-white/10 bg-white/[.025] p-4">
+            {monthlyMembers.map((member) => {
+              const overdue = Boolean(member.renewal_due_on && member.renewal_due_on < localDateKey(new Date()));
+              const overdueDays = member.renewal_due_on ? daysOverdue(member.renewal_due_on) : 0;
+              return (
+              <div key={member.user_id} className={`flex flex-wrap items-center justify-between gap-3 rounded-2xl border p-4 ${overdue ? "border-pink/45 bg-pink/[.08]" : "border-white/10 bg-white/[.025]"}`}>
                 <div>
                   <p className="font-black">{member.member_name}</p>
                   <p className="mt-1 text-xs text-white/45">{member.email}</p>
+                  {overdue && <p className="mt-2 text-sm font-black uppercase tracking-wide text-pink">{overdueDays} day{overdueDays === 1 ? "" : "s"} overdue</p>}
                 </div>
                 <div className="text-left sm:text-right">
                   <p className="text-xs font-black uppercase tracking-wider text-pink">Renewal due</p>
                   <p className="mt-1 text-sm font-bold">
                     {new Date(`${member.renewal_due_on}T12:00:00`).toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric" })}
                   </p>
+                  {overdue && (
+                    <p className="mt-2 text-xs font-bold text-white/55">
+                      {member.last_due_notification_on
+                        ? `Renewal notification sent ${new Date(`${member.last_due_notification_on}T12:00:00`).toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" })}`
+                        : "Renewal notification not yet sent"}
+                    </p>
+                  )}
                 </div>
               </div>
-            ))}
+              );
+            })}
           </div>
         ) : (
           <p className="mt-4 text-sm text-white/45">No monthly memberships have been set yet.</p>

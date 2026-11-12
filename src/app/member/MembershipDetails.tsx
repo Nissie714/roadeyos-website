@@ -48,7 +48,11 @@ export default function MembershipDetails() {
           </p>
         </div>
       ) : (
-        <p className="mt-6 text-sm text-white/45">No monthly membership has been assigned to your account.</p>
+        <div className="mt-6 rounded-2xl border border-white/10 bg-white/[.03] p-5">
+          <p className="text-xs font-black uppercase tracking-wider text-pink">Standard membership</p>
+          <p className="mt-3 text-3xl font-black">PAYG</p>
+          <p className="mt-3 text-sm text-white/50">No monthly membership has been assigned to your account, so your membership status is Pay As You Go.</p>
+        </div>
       )}
     </section>
   );

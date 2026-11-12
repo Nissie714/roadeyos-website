@@ -6,14 +6,16 @@ import InstructorBroadcast from "./InstructorBroadcast";
 import InstructorPasswordForm from "./InstructorPasswordForm";
 import InstructorRoster from "./InstructorRoster";
 import MonthlyMembers from "./MonthlyMembers";
+import EmergencyContacts from "./EmergencyContacts";
 
-type InstructorTab = "details" | "push" | "classes" | "memberships";
+type InstructorTab = "details" | "push" | "classes" | "memberships" | "emergency";
 
 const tabs: Array<{ id: InstructorTab; label: string }> = [
   { id: "details", label: "Your details" },
-  { id: "push", label: "Notification" },
+  { id: "push", label: "Notifications" },
   { id: "classes", label: "Classes" },
   { id: "memberships", label: "Monthly members" },
+  { id: "emergency", label: "Emergency Contacts" },
 ];
 
 export default function InstructorDashboardTabs() {
@@ -47,6 +49,7 @@ export default function InstructorDashboardTabs() {
         {activeTab === "push" && <InstructorBroadcast />}
         {activeTab === "classes" && <InstructorRoster />}
         {activeTab === "memberships" && <MonthlyMembers />}
+        {activeTab === "emergency" && <EmergencyContacts />}
       </div>
     </div>
   );

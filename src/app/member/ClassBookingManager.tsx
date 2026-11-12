@@ -227,7 +227,7 @@ export default function ClassBookingManager({ view }: { view: "upcoming" | "cale
       )}
 
       <p className="mt-5 text-xs leading-5 text-white/35">
-        Group sessions must be cancelled at least 12 hours before the class begins.
+        Group sessions must be cancelled at least 6 hours before the class begins.
       </p>
       </section>
       }

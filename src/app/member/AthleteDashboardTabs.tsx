@@ -7,6 +7,7 @@ import AthleteNotifications from "./AthleteNotifications";
 import InstructorPasswordForm from "../instructor/InstructorPasswordForm";
 import MembershipDetails from "./MembershipDetails";
 import HealthDeclaration from "./HealthDeclaration";
+import EmergencyContactForm from "./EmergencyContactForm";
 
 type DashboardTab = "details" | "bookings" | "calendar" | "membership" | "notifications";
 
@@ -15,7 +16,7 @@ const tabs: Array<{ id: DashboardTab; label: string }> = [
   { id: "bookings", label: "Upcoming bookings" },
   { id: "calendar", label: "Live class calendar" },
   { id: "membership", label: "Membership" },
-  { id: "notifications", label: "NOTIFICATION" },
+  { id: "notifications", label: "NOTIFICATIONS" },
 ];
 
 export default function AthleteDashboardTabs() {
@@ -43,12 +44,13 @@ export default function AthleteDashboardTabs() {
         {activeTab === "details" && (
           <>
             <ProfileNameForm />
+            <EmergencyContactForm />
             <HealthDeclaration />
             <InstructorPasswordForm />
             <section className="mt-8 rounded-[2rem] border border-white/10 bg-[#101010] p-6">
               <p className="text-xs font-black uppercase tracking-widest text-pink">Cancellation policy</p>
               <p className="mt-4 text-sm leading-6 text-white/55">
-                Group bookings require 12 hours&apos; notice. Contact Road-e-yo&apos;s directly if you need help with a late cancellation.
+                Group bookings require 6 hours&apos; notice. Contact Road-e-yo&apos;s directly if you need help with a late cancellation.
               </p>
             </section>
           </>

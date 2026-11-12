@@ -33,7 +33,7 @@ export default function TermsAndConditionsPage() {
       <section>
         <h2>Cancellations</h2>
         <ul>
-          <li>Group sessions require at least 12 hours&apos; cancellation notice.</li>
+          <li>Group sessions require at least 6 hours&apos; cancellation notice.</li>
           <li>Private 1:1 sessions cancelled within 24 hours are chargeable unless we agree otherwise.</li>
           <li>Late cancellation or non-attendance may result in the session being charged or a class credit being used.</li>
         </ul>

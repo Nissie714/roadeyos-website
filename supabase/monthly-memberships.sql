@@ -14,13 +14,15 @@ create table if not exists public.monthly_memberships (
 alter table public.monthly_memberships enable row level security;
 revoke all on table public.monthly_memberships from anon, authenticated;
 
-create or replace function public.get_registered_members_for_membership()
+drop function if exists public.get_registered_members_for_membership();
+create function public.get_registered_members_for_membership()
 returns table (
   user_id uuid,
   member_name text,
   email text,
   membership_started_on date,
-  renewal_due_on date
+  renewal_due_on date,
+  last_due_notification_on date
 )
 language plpgsql security definer stable set search_path = public
 as $$
@@ -34,7 +36,8 @@ begin
     coalesce(nullif(trim(concat_ws(' ', p.first_name, p.last_name)), ''), nullif(p.full_name, ''), split_part(u.email, '@', 1)),
     u.email::text,
     m.membership_started_on,
-    m.renewal_due_on
+    m.renewal_due_on,
+    m.last_due_notification_on
   from public.profiles p
   join auth.users u on u.id = p.id
   left join public.monthly_memberships m on m.user_id = p.id and m.status = 'active'

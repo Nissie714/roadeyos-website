@@ -257,7 +257,7 @@ export default function Home() {
         </div>
         <p className="mx-auto mt-6 max-w-3xl text-center text-xs leading-5 text-white/45">
           Private-session cancellations made within 24 hours are chargeable.
-          Group sessions must be cancelled at least 12 hours in advance.
+          Group sessions must be cancelled at least 6 hours in advance.
         </p>
       </section>
 

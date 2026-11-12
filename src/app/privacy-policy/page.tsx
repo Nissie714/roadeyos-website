@@ -7,7 +7,7 @@ export const metadata = {
 
 export default function PrivacyPolicyPage() {
   return (
-    <LegalPageLayout eyebrow="Your information" title="Privacy Policy" updated="9 November 2026">
+    <LegalPageLayout eyebrow="Your information" title="Privacy Policy" updated="12 November 2026">
       <section>
         <h2>Who we are</h2>
         <p>Road-e-yo&apos;s Bootcamp &amp; Fitness Centre is responsible for the personal information described in this notice.</p>
@@ -35,6 +35,11 @@ export default function PrivacyPolicyPage() {
       <section>
         <h2>Name sharing</h2>
         <p>If you opt in, only your first name and surname initial may be shown to other signed-in athletes who are booked into the same session. Your email address is not shown. You can withdraw permission at any time by unticking the option in Your Details.</p>
+      </section>
+
+      <section>
+        <h2>Emergency contacts</h2>
+        <p>Emergency-contact details are stored securely with your athlete account. They are available only to authorised Road-e-yo&apos;s instructors and will be used when reasonably necessary to protect your health or safety in an emergency.</p>
       </section>
 
       <section>
