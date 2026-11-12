@@ -87,6 +87,9 @@ revoke all on function public.get_my_health_declaration() from public;
 grant execute on function public.save_my_health_declaration(jsonb, text, text) to authenticated;
 grant execute on function public.get_my_health_declaration() to authenticated;
 
+-- Instructor status and reset controls are installed separately by
+-- instructor-parq-reset.sql so each reset has an audit record.
+
 -- Enforce the declaration requirement in the database as well as the website,
 -- so a booking cannot bypass the on-screen controls.
 create or replace function public.book_class(p_session_id uuid)
