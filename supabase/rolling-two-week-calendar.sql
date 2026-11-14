@@ -17,7 +17,7 @@ begin
     values
       (1, time '18:00', 'Bootcamp'),
       (2, time '09:30', 'Bootcamp'),
-      (2, time '19:15', 'HYROX'),
+      (2, time '18:30', 'HYROX'),
       (3, time '18:00', 'Bootcamp'),
       (4, time '09:30', 'Bootcamp'),
       (5, time '09:30', 'HYROX'),

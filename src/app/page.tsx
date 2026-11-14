@@ -11,7 +11,7 @@ const timetable = [
     day: "Tuesday",
     sessions: [
       { time: "9:30 am", type: "Bootcamp" },
-      { time: "7:15 pm", type: "HYROX" },
+      { time: "6:30 pm", type: "HYROX" },
     ],
   },
   { day: "Wednesday", sessions: [{ time: "6:00 pm", type: "Bootcamp" }] },

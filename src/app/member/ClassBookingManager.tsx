@@ -81,7 +81,7 @@ export default function ClassBookingManager({ view }: { view: "upcoming" | "cale
   async function book(session: Session) {
     if (healthStatus !== "self_declared_fit") {
       setIsError(true);
-      setMessage(healthStatus === "advice_required" ? "Class booking is locked because your PAR-Q identified a health matter. Please contact Yolanda to discuss suitable exercise options." : "Please complete and sign the PAR-Q health declaration in Your details before booking a class.");
+      setMessage(healthStatus === "advice_required" ? "Class booking is locked because your PAR-Q identified a health matter and medical approval to train has not been confirmed. Please contact Yolanda to discuss suitable exercise options." : "Please complete and sign the PAR-Q health declaration in Your details before booking a class.");
       return;
     }
     setWorkingId(session.id);
@@ -179,7 +179,7 @@ export default function ClassBookingManager({ view }: { view: "upcoming" | "cale
           <p className="font-black text-amber-100">PAR-Q required before booking</p>
           <p className="mt-2 text-sm leading-6 text-white/60">
             {healthStatus === "advice_required"
-              ? "Your PAR-Q identified a health matter, so class booking is locked. Please contact Yolanda to discuss safe and suitable exercise options."
+              ? "Your PAR-Q identified a health matter and medical approval to train has not been confirmed, so class booking is locked. Open Your details to update the PAR-Q after receiving approval, or contact Yolanda to discuss suitable exercise options."
               : "Open the Your details tab and complete every PAR-Q question, tick the declaration and digitally sign it before booking your first class."}
           </p>
         </div>

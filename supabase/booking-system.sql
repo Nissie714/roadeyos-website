@@ -94,7 +94,7 @@ grant execute on function public.cancel_class(uuid) to authenticated;
 -- Seed eight weeks of the agreed regular timetable in UK local time.
 with timetable(day_number, class_time, class_name) as (
   values (1,time '18:00','Bootcamp'), (2,time '09:30','Bootcamp'),
-    (2,time '19:15','HYROX'), (3,time '18:00','Bootcamp'),
+    (2,time '18:30','HYROX'), (3,time '18:00','Bootcamp'),
     (4,time '09:30','Bootcamp'), (5,time '09:30','HYROX'),
     (5,time '18:00','HYROX'), (6,time '09:00','Bootcamp')
 ), weeks as (

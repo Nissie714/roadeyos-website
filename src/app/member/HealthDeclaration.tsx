@@ -30,6 +30,7 @@ export default function HealthDeclaration() {
   const [answers, setAnswers] = useState<Record<string, Answer>>(emptyAnswers);
   const [signature, setSignature] = useState("");
   const [confirmed, setConfirmed] = useState(false);
+  const [medicalApprovalConfirmed, setMedicalApprovalConfirmed] = useState(false);
   const [existing, setExisting] = useState<StoredDeclaration | null>(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -62,11 +63,15 @@ export default function HealthDeclaration() {
     setSaving(true);
     setMessage("");
     const supabase = createClient();
-    const booleanAnswers = Object.fromEntries(Object.entries(answers).map(([key, value]) => [key, value === "yes"]));
+    const booleanAnswers = {
+      ...Object.fromEntries(Object.entries(answers).map(([key, value]) => [key, value === "yes"])),
+      medical_approval_confirmed: hasYesAnswer && medicalApprovalConfirmed,
+    };
+    const declarationStatus = hasYesAnswer && !medicalApprovalConfirmed ? "advice_required" : "self_declared_fit";
     const { data, error } = await supabase.rpc("save_my_health_declaration", {
       p_answers: booleanAnswers,
       p_signature_name: signature.trim(),
-      p_declaration_status: hasYesAnswer ? "advice_required" : "self_declared_fit",
+      p_declaration_status: declarationStatus,
     });
 
     if (error) setMessage(error.message);
@@ -74,12 +79,19 @@ export default function HealthDeclaration() {
       setExisting({
         answers: booleanAnswers,
         signature_name: signature.trim(),
-        declaration_status: hasYesAnswer ? "advice_required" : "self_declared_fit",
+        declaration_status: declarationStatus,
         signed_at: String(data),
       });
-      setMessage(hasYesAnswer ? "Your PAR-Q has been saved. Class booking is locked. Please contact Yolanda to discuss suitable exercise options." : "Your signed PAR-Q health declaration has been saved. You can now book classes.");
+      setMessage(
+        declarationStatus === "advice_required"
+          ? "Your PAR-Q has been saved. Class booking is locked until you have received medical approval to train. Please contact Yolanda to discuss suitable exercise options."
+          : hasYesAnswer
+            ? "Your signed PAR-Q and medical approval confirmation have been saved. You can now book classes."
+            : "Your signed PAR-Q health declaration has been saved. You can now book classes.",
+      );
       setSignature("");
       setConfirmed(false);
+      setMedicalApprovalConfirmed(false);
     }
     setSaving(false);
   }
@@ -97,7 +109,7 @@ export default function HealthDeclaration() {
       {existing && (
         <div className={`mt-5 rounded-2xl border p-4 ${existing.declaration_status === "self_declared_fit" ? "border-emerald-400/30 bg-emerald-400/10" : "border-amber-300/30 bg-amber-300/10"}`}>
           <p className="font-black">
-            {existing.declaration_status === "self_declared_fit" ? "Signed declaration on file" : "Further advice indicated"}
+            {existing.declaration_status === "self_declared_fit" ? "Signed declaration on file" : "Medical approval required"}
           </p>
           <p className="mt-1 text-sm text-white/55">
             Signed by {existing.signature_name} on {new Date(existing.signed_at).toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric" })}. Complete the form again if your health changes.
@@ -134,7 +146,26 @@ export default function HealthDeclaration() {
 
         {allAnswered && hasYesAnswer && (
           <div className="mt-5 rounded-2xl border border-amber-300/35 bg-amber-300/10 p-5 text-sm leading-6 text-amber-100">
-            One or more answers indicate a health matter that needs to be discussed before you take part. Class booking will remain locked. Please contact Yolanda to discuss safe and suitable exercise options and, where appropriate, seek advice from a qualified healthcare professional. You can also use the official PAR-Q+ pathway below.
+            One or more answers indicate a health matter or physical niggle. You may still take part once you have discussed every issue with a doctor or qualified healthcare professional and they have approved you to train. If you do not yet have that approval, class booking will remain locked and you should contact Yolanda to discuss suitable exercise options.
+          </div>
+        )}
+
+        {allAnswered && hasYesAnswer && (
+          <div className="mt-5 rounded-2xl border border-emerald-400/30 bg-emerald-400/[.08] p-5">
+            <label className="flex cursor-pointer items-start gap-3">
+              <input
+                type="checkbox"
+                checked={medicalApprovalConfirmed}
+                onChange={(event) => setMedicalApprovalConfirmed(event.target.checked)}
+                className="mt-1 h-5 w-5 shrink-0 accent-pink"
+              />
+              <span className="text-sm font-bold leading-6">
+                I confirm that I have discussed every health issue, injury or physical niggle identified above with a doctor or qualified healthcare professional, and they have approved me to take part in Road-e-yo&apos;s training sessions.
+              </span>
+            </label>
+            <p className="mt-3 text-xs leading-5 text-white/45">
+              Only tick this box if medical approval has already been given. If you are unsure, leave it unticked and contact Yolanda before booking.
+            </p>
           </div>
         )}
 
@@ -143,7 +174,9 @@ export default function HealthDeclaration() {
             <input type="checkbox" checked={confirmed} onChange={(event) => setConfirmed(event.target.checked)} className="mt-1 h-5 w-5 shrink-0 accent-pink" />
             <span className="text-sm font-bold leading-6">
               {hasYesAnswer
-                ? "I confirm that my answers are accurate. I understand that I cannot book a class until I have contacted Yolanda to discuss suitable exercise options and any appropriate clearance."
+                ? medicalApprovalConfirmed
+                  ? "I confirm that my answers are accurate, that medical approval to train has been given, and that I will tell Road-e-yo's if my health, injury, symptoms or medication changes."
+                  : "I confirm that my answers are accurate. I understand that I cannot book a class until I have received medical approval to train and discussed suitable exercise options with Yolanda."
                 : "I confirm that my answers are accurate and, to the best of my knowledge, I am fit and healthy to take part in Road-e-yo's sessions."}
             </span>
           </label>

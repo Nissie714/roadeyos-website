@@ -44,17 +44,22 @@ begin
       raise exception 'Every health question must be answered.';
     end if;
   end loop;
-  if p_declaration_status = 'self_declared_fit' and exists (
-    select 1 from jsonb_each(p_answers) item where item.value = 'true'::jsonb
-  ) then
-    raise exception 'The declaration status does not match the supplied answers.';
+  if p_declaration_status = 'self_declared_fit'
+    and exists (
+      select 1 from jsonb_each(p_answers) item
+      where item.key <> 'medical_approval_confirmed'
+        and item.value = 'true'::jsonb
+    )
+    and coalesce((p_answers ->> 'medical_approval_confirmed')::boolean, false) is not true
+  then
+    raise exception 'Medical approval to train must be confirmed when a health answer is Yes.';
   end if;
 
   insert into public.health_declarations (
     user_id, answers, signature_name, declaration_status, form_version, signed_at, updated_at
   ) values (
     auth.uid(), p_answers, trim(p_signature_name), p_declaration_status,
-    'roadeyos-health-declaration-v1', v_signed_at, v_signed_at
+    'roadeyos-health-declaration-v2', v_signed_at, v_signed_at
   )
   on conflict (user_id) do update set
     answers = excluded.answers,
@@ -109,7 +114,7 @@ begin
     select 1 from public.health_declarations
     where user_id = auth.uid() and declaration_status = 'self_declared_fit'
   ) then
-    raise exception 'A completed fit-to-participate PAR-Q is required before booking. If your PAR-Q identified a health matter, please contact Yolanda to discuss suitable exercise options.';
+    raise exception 'A completed fit-to-participate PAR-Q is required before booking. If your PAR-Q identified a health matter, medical approval to train must be confirmed before booking.';
   end if;
 
   select capacity into v_capacity
