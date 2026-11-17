@@ -36,6 +36,9 @@ export default function RootLayout({
       <body className="min-h-full flex flex-col">
         <OneSignalInitializer />
         {children}
+        <div className="border-t border-white/10 bg-black px-5 py-5 text-center text-xs text-white/40">
+          © 2026 Road-e-yo&apos;s. All rights reserved.
+        </div>
       </body>
     </html>
   );
