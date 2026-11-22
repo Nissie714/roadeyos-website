@@ -25,8 +25,8 @@ declare
   v_item jsonb;
 begin
   if auth.uid() is null then raise exception 'You must be signed in to submit an order.'; end if;
-  if jsonb_typeof(p_items) <> 'array' or jsonb_array_length(p_items) < 1 or jsonb_array_length(p_items) > 4 then
-    raise exception 'Choose between one and four clothing items.';
+  if jsonb_typeof(p_items) <> 'array' or jsonb_array_length(p_items) < 1 or jsonb_array_length(p_items) > 20 then
+    raise exception 'Choose between one and twenty clothing items.';
   end if;
 
   for v_item in select value from jsonb_array_elements(p_items)
