@@ -8,14 +8,18 @@ import InstructorRoster from "./InstructorRoster";
 import MonthlyMembers from "./MonthlyMembers";
 import EmergencyContacts from "./EmergencyContacts";
 import ParQManagement from "./ParQManagement";
+import InstructorClothingOrders from "./InstructorClothingOrders";
+import AttendanceHistory from "./AttendanceHistory";
 
-type InstructorTab = "details" | "push" | "classes" | "memberships" | "parq" | "emergency";
+type InstructorTab = "details" | "push" | "classes" | "history" | "memberships" | "clothing" | "parq" | "emergency";
 
 const tabs: Array<{ id: InstructorTab; label: string }> = [
   { id: "details", label: "Your details" },
   { id: "push", label: "Notifications" },
   { id: "classes", label: "Classes" },
+  { id: "history", label: "History" },
   { id: "memberships", label: "Monthly members" },
+  { id: "clothing", label: "Clothing Orders" },
   { id: "parq", label: "PAR-Q" },
   { id: "emergency", label: "Emergency Contacts" },
 ];
@@ -50,7 +54,9 @@ export default function InstructorDashboardTabs() {
         )}
         {activeTab === "push" && <InstructorBroadcast />}
         {activeTab === "classes" && <InstructorRoster />}
+        {activeTab === "history" && <AttendanceHistory />}
         {activeTab === "memberships" && <MonthlyMembers />}
+        {activeTab === "clothing" && <InstructorClothingOrders />}
         {activeTab === "parq" && <ParQManagement />}
         {activeTab === "emergency" && <EmergencyContacts />}
       </div>

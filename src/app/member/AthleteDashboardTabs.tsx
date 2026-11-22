@@ -8,14 +8,16 @@ import InstructorPasswordForm from "../instructor/InstructorPasswordForm";
 import MembershipDetails from "./MembershipDetails";
 import HealthDeclaration from "./HealthDeclaration";
 import EmergencyContactForm from "./EmergencyContactForm";
+import ClothingOrder from "./ClothingOrder";
 
-type DashboardTab = "details" | "bookings" | "calendar" | "membership" | "notifications";
+type DashboardTab = "details" | "bookings" | "calendar" | "membership" | "clothing" | "notifications";
 
 const tabs: Array<{ id: DashboardTab; label: string }> = [
   { id: "details", label: "Your details" },
   { id: "bookings", label: "Upcoming bookings" },
   { id: "calendar", label: "Live class calendar" },
   { id: "membership", label: "Membership" },
+  { id: "clothing", label: "Clothing Order" },
   { id: "notifications", label: "NOTIFICATIONS" },
 ];
 
@@ -58,6 +60,7 @@ export default function AthleteDashboardTabs() {
         {activeTab === "bookings" && <ClassBookingManager view="upcoming" />}
         {activeTab === "calendar" && <ClassBookingManager view="calendar" />}
         {activeTab === "membership" && <MembershipDetails />}
+        {activeTab === "clothing" && <ClothingOrder />}
         {activeTab === "notifications" && <AthleteNotifications />}
       </div>
     </div>

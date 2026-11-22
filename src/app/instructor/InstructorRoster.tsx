@@ -107,9 +107,9 @@ export default function InstructorRoster() {
   return (
     <div className="mt-10 grid gap-5">
       <div>
-        <p className="eyebrow">Rolling two-week calendar</p>
+        <p className="eyebrow">Two-week class window</p>
         <h2 className="mt-2 text-2xl font-black uppercase">Upcoming classes</h2>
-        <p className="mt-2 text-sm text-white/50">Only sessions taking place within the next 14 days are shown.</p>
+        <p className="mt-2 text-sm text-white/50">Confirmed bookings for classes taking place during the next 14 days.</p>
       </div>
       {message && <p role="status" className="rounded-xl border border-pink/30 bg-pink/10 p-4 text-sm font-bold text-pink">{message}</p>}
       {!sessions.length && <p className="rounded-2xl border border-white/10 bg-[#101010] p-6 text-sm text-white/45">There are no scheduled classes in the next 14 days.</p>}
@@ -122,10 +122,10 @@ export default function InstructorRoster() {
             </div>
             <span className="rounded-full border border-pink/30 bg-pink/10 px-4 py-2 text-sm font-black text-pink">{athletes.length}/{session.capacity} booked</span>
           </div>
-          <div className="mt-5 flex flex-wrap gap-3">
+          {new Date(session.starts_at) > new Date() && <div className="mt-5 flex flex-wrap gap-3">
             <button type="button" onClick={() => beginEditing(session)} className="rounded-full border border-white/20 px-4 py-2 text-xs font-black transition hover:border-pink hover:text-pink">Change date or time</button>
             <button type="button" disabled={workingId === session.session_id} onClick={() => void cancelClass(session)} className="rounded-full border border-red-400/40 px-4 py-2 text-xs font-black text-red-300 transition hover:bg-red-400/10 disabled:opacity-50">Cancel session</button>
-          </div>
+          </div>}
           {editingId === session.session_id && (
             <div className="mt-4 rounded-2xl border border-pink/25 bg-pink/[.06] p-4">
               <label className="block max-w-sm">
@@ -144,7 +144,10 @@ export default function InstructorRoster() {
                 <thead className="text-xs uppercase tracking-wider text-white/35"><tr><th className="pb-3">Athlete</th><th className="pb-3">Booked</th></tr></thead>
                 <tbody className="divide-y divide-white/10">
                   {athletes.map((athlete) => (
-                    <tr key={athlete.booking_id}><td className="py-3 font-bold">{athlete.athlete_name}</td><td className="py-3 text-white/45">{athlete.booked_at ? new Date(athlete.booked_at).toLocaleDateString("en-GB") : ""}</td></tr>
+                    <tr key={athlete.booking_id}>
+                      <td className="py-3 font-bold">{athlete.athlete_name}</td>
+                      <td className="py-3 text-white/45">{athlete.booked_at ? new Date(athlete.booked_at).toLocaleDateString("en-GB") : ""}</td>
+                    </tr>
                   ))}
                 </tbody>
               </table>

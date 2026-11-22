@@ -38,6 +38,10 @@ export default async function MemberPage() {
             <h1 className="mt-3 text-5xl font-black uppercase tracking-[-.05em] sm:text-6xl">
               Hello, athlete.
             </h1>
+            <div className="mt-5 max-w-2xl rounded-2xl border border-pink/35 bg-pink/[.09] px-5 py-4">
+              <p className="text-sm font-black text-pink">Do you want to treat yourself to a new hoodie or T-shirt?</p>
+              <p className="mt-1 text-sm leading-6 text-white/65">Clothing orders are now being taken—check the Clothing Order tab.</p>
+            </div>
             <p className="mt-4 text-white/55">Signed in as {user.email}</p>
             <MembershipOverdueBanner />
           </div>
