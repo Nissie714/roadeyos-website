@@ -6,7 +6,6 @@ import { createClient } from "@/lib/supabase/client";
 type RegisteredMember = {
   user_id: string;
   member_name: string;
-  email: string;
   membership_started_on: string | null;
   renewal_due_on: string | null;
   last_due_notification_on: string | null;
@@ -97,7 +96,7 @@ export default function MonthlyMembers() {
             <option value="">{loading ? "Loading members…" : "Choose a member"}</option>
             {members.map((member) => (
               <option key={member.user_id} value={member.user_id}>
-                {member.member_name} — {member.email}
+                {member.member_name}
               </option>
             ))}
           </select>
@@ -123,7 +122,6 @@ export default function MonthlyMembers() {
               <div key={member.user_id} className={`flex flex-wrap items-center justify-between gap-3 rounded-2xl border p-4 ${overdue ? "border-pink/45 bg-pink/[.08]" : "border-white/10 bg-white/[.025]"}`}>
                 <div>
                   <p className="font-black">{member.member_name}</p>
-                  <p className="mt-1 text-xs text-white/45">{member.email}</p>
                   {overdue && <p className="mt-2 text-sm font-black uppercase tracking-wide text-pink">{overdueDays} day{overdueDays === 1 ? "" : "s"} overdue</p>}
                 </div>
                 <div className="text-left sm:text-right">

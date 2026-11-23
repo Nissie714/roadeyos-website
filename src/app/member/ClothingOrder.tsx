@@ -1,7 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { createClient } from "@/lib/supabase/client";
+import { clothingColours, clothingColourHex } from "./clothingColours";
 
 type GarmentId = "hoodie" | "crew" | "tshirt" | "dropShoulderTshirt";
 
@@ -22,9 +23,23 @@ const garments: Array<{ id: GarmentId; name: string; description: string }> = [
 ];
 
 const sizes = ["XS", "S", "M", "L", "XL", "2XL", "3XL"];
-const garmentColours = ["Black", "Hot pink", "Charcoal", "White", "Navy"];
 const logoColours = ["Pink", "White", "Black"];
 const maxItems = 20;
+
+type SavedOrder = {
+  id: string;
+  items: Array<{
+    garment: string;
+    hoodie_style: string | null;
+    size: string;
+    garment_colour: string;
+    garment_colour_hex?: string;
+    rear_logo: boolean;
+    logo_colour: string | null;
+  }>;
+  status: string;
+  created_at: string;
+};
 
 const initialChoice: GarmentChoice = {
   id: 0,
@@ -45,6 +60,23 @@ export default function ClothingOrder() {
   const [nextId, setNextId] = useState(1);
   const [submitting, setSubmitting] = useState(false);
   const [status, setStatus] = useState("");
+  const [savedOrders, setSavedOrders] = useState<SavedOrder[]>([]);
+  const [historyStatus, setHistoryStatus] = useState("Loading your orders…");
+
+  const loadOrders = useCallback(async () => {
+    const supabase = createClient();
+    const { data, error } = await supabase.rpc("get_my_clothing_orders");
+    if (error) setHistoryStatus("Your order history is temporarily unavailable.");
+    else {
+      setSavedOrders((data ?? []) as SavedOrder[]);
+      setHistoryStatus("");
+    }
+  }, []);
+
+  useEffect(() => {
+    const timer = window.setTimeout(() => void loadOrders(), 0);
+    return () => window.clearTimeout(timer);
+  }, [loadOrders]);
 
   const itemCount = garments.reduce((count, garment) => count + choices[garment.id].length, 0);
 
@@ -86,15 +118,17 @@ export default function ClothingOrder() {
         hoodie_style: garment.id === "hoodie" ? choice.hoodieStyle : null,
         size: choice.size,
         garment_colour: choice.colour,
+        garment_colour_hex: clothingColourHex(choice.colour),
         rear_logo: choice.rearLogo === "Yes",
         logo_colour: choice.rearLogo === "Yes" ? choice.logoColour : null,
     })));
     const supabase = createClient();
-    const { error } = await supabase.rpc("submit_clothing_order", { p_items: items });
+    const { data, error } = await supabase.rpc("submit_clothing_order", { p_items: items });
     if (error) setStatus(error.message);
     else {
       setChoices({ hoodie: [], crew: [], tshirt: [], dropShoulderTshirt: [] });
-      setStatus("Your clothing order has been sent to the instructors.");
+      setStatus(`Your clothing order has been sent to the instructors. Reference: ${String(data).slice(0, 8).toUpperCase()}.`);
+      await loadOrders();
     }
     setSubmitting(false);
   }
@@ -105,6 +139,7 @@ export default function ClothingOrder() {
       <h2 className="mt-2 text-3xl font-black uppercase tracking-[-.03em]">Build your clothing order</h2>
       <p className="mt-3 max-w-3xl text-sm leading-6 text-white/55">
         Add as many of each clothing type as you need. Choose the size, garment colour and rear-logo finish separately for every item.
+        Colour swatches are approximate; instructors will confirm availability.
       </p>
 
       <div className="mt-7 grid gap-4 lg:grid-cols-2">
@@ -133,7 +168,7 @@ export default function ClothingOrder() {
                     <div className="grid gap-4 sm:grid-cols-2">
                       {garment.id === "hoodie" && <SelectField label="Hoodie style" value={choice.hoodieStyle} options={["Zip front", "Overhead"]} disabled={submitting} onChange={(value) => updateChoice(garment.id, choice.id, { hoodieStyle: value as GarmentChoice["hoodieStyle"] })} />}
                       <SelectField label="Size" value={choice.size} options={sizes} disabled={submitting} onChange={(value) => updateChoice(garment.id, choice.id, { size: value })} />
-                      <SelectField label="Garment colour" value={choice.colour} options={garmentColours} disabled={submitting} onChange={(value) => updateChoice(garment.id, choice.id, { colour: value })} />
+                      <ColourField value={choice.colour} disabled={submitting} onChange={(value) => updateChoice(garment.id, choice.id, { colour: value })} />
                       <SelectField label="Rear printed logo" value={choice.rearLogo} options={["Yes", "No"]} disabled={submitting} onChange={(value) => updateChoice(garment.id, choice.id, { rearLogo: value as "Yes" | "No" })} />
                       <SelectField label="Logo colour" value={choice.logoColour} options={logoColours} disabled={submitting || choice.rearLogo === "No"} onChange={(value) => updateChoice(garment.id, choice.id, { logoColour: value })} />
                     </div>
@@ -171,7 +206,64 @@ export default function ClothingOrder() {
         </div>
         {status && <p role="status" className="mt-4 text-sm font-bold text-pink">{status}</p>}
       </div>
+
+      <div className="mt-6 rounded-3xl border border-white/10 bg-black/40 p-5 sm:p-6">
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <h3 className="text-xl font-black uppercase">Your clothing orders</h3>
+          <button type="button" onClick={() => void loadOrders()} className="rounded-full border border-white/20 px-4 py-2 text-xs font-bold text-white/70 hover:border-pink hover:text-white">Refresh orders</button>
+        </div>
+        <p className="mt-2 text-sm text-white/50">Past orders stay here for reference. If an instructor cancels an order, you can submit a new one above.</p>
+        {historyStatus ? <p role="status" className="mt-4 text-sm text-white/50">{historyStatus}</p> : savedOrders.length ? (
+          <div className="mt-5 space-y-4">
+            {savedOrders.map((order) => (
+              <article key={order.id} className="rounded-2xl border border-white/10 bg-white/[.03] p-4">
+                <div className="flex flex-wrap items-center justify-between gap-2">
+                  <div>
+                    <p className="font-black">Order {order.id.slice(0, 8).toUpperCase()}</p>
+                    <p className="mt-1 text-xs text-white/45">{new Intl.DateTimeFormat("en-GB", { dateStyle: "medium", timeStyle: "short", timeZone: "Europe/London" }).format(new Date(order.created_at))}</p>
+                  </div>
+                  <span className={`rounded-full px-3 py-1 text-xs font-black uppercase ${order.status === "Cancelled" ? "bg-red-400/15 text-red-300" : "bg-pink/15 text-pink"}`}>{order.status}</span>
+                </div>
+                {order.status === "Cancelled" && <p className="mt-3 text-sm font-bold text-pink">This order was cancelled. You can place a new order above.</p>}
+                <ul className="mt-4 grid gap-2 md:grid-cols-2">
+                  {order.items.map((item, index) => (
+                    <li key={index} className="rounded-xl border border-white/10 p-3 text-sm text-white/65">
+                      <p className="font-bold text-white">{item.garment}</p>
+                      <p className="mt-1">{item.hoodie_style ? `${item.hoodie_style} · ` : ""}{item.size} · {item.garment_colour}</p>
+                      <p>Rear logo: {item.rear_logo ? `Yes (${item.logo_colour})` : "No"}</p>
+                    </li>
+                  ))}
+                </ul>
+              </article>
+            ))}
+          </div>
+        ) : <p className="mt-4 text-sm text-white/45">You have not sent a clothing order yet.</p>}
+      </div>
     </section>
+  );
+}
+
+function ColourField({ value, disabled, onChange }: { value: string; disabled: boolean; onChange: (value: string) => void }) {
+  return (
+    <div>
+      <label className="block">
+        <span className="mb-2 block text-xs font-black uppercase tracking-wide text-white/55">Garment colour</span>
+        <span className="flex items-center gap-3">
+          <span className="h-8 w-8 shrink-0 rounded-md border border-white/30" style={{ backgroundColor: clothingColourHex(value) }} aria-hidden="true" />
+          <select value={value} disabled={disabled} onChange={(event) => onChange(event.target.value)} className="progress-input disabled:cursor-not-allowed disabled:opacity-35">
+            {clothingColours.map((colour) => <option key={colour.name} value={colour.name}>{colour.name}</option>)}
+          </select>
+        </span>
+      </label>
+      <details className="mt-2 text-sm text-white/60">
+        <summary className="cursor-pointer text-pink">View colour chart</summary>
+        <div className="mt-3 grid grid-cols-6 gap-2 sm:grid-cols-8" role="group" aria-label="Garment colour swatches">
+          {clothingColours.map((colour) => (
+            <button key={colour.name} type="button" disabled={disabled} onClick={() => onChange(colour.name)} title={colour.name} aria-label={`Choose ${colour.name}`} aria-pressed={value === colour.name} className={`h-9 rounded-md border-2 transition disabled:opacity-40 ${value === colour.name ? "border-pink ring-2 ring-pink/50" : "border-white/20 hover:border-white"}`} style={{ backgroundColor: colour.hex }} />
+          ))}
+        </div>
+      </details>
+    </div>
   );
 }
 

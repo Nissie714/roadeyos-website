@@ -1,0 +1,41 @@
+// Approximate digital swatches from the supplied, unlabelled clothing colour chart.
+export const clothingColours = [
+  { name: "Slate blue", hex: "#557793" }, { name: "White", hex: "#FFFFFF" },
+  { name: "Light grey", hex: "#D7D7D7" }, { name: "Blush pink", hex: "#ECC8CA" },
+  { name: "Ink black", hex: "#232227" }, { name: "Deep teal", hex: "#00453A" },
+  { name: "Royal blue", hex: "#1F3D7D" }, { name: "Burgundy", hex: "#722434" },
+  { name: "Burnt orange", hex: "#CD4C2C" }, { name: "Bubblegum pink", hex: "#EC87B3" },
+  { name: "Tan", hex: "#BB865A" }, { name: "Charcoal", hex: "#494C51" },
+  { name: "Chocolate brown", hex: "#562D2B" }, { name: "Powder blue", hex: "#8DB0D8" },
+  { name: "Raspberry", hex: "#A4284D" }, { name: "Black", hex: "#1B1B1B" },
+  { name: "Sand", hex: "#E5CCA3" }, { name: "Lilac", hex: "#9B7BAA" },
+  { name: "Sage", hex: "#A4B8AC" }, { name: "Mauve grey", hex: "#978C9A" },
+  { name: "Dusty pink", hex: "#E0ADAC" }, { name: "Rose pink", hex: "#D18184" },
+  { name: "Olive grey", hex: "#57604D" }, { name: "Plum", hex: "#A5216A" },
+  { name: "Crimson", hex: "#B61F30" }, { name: "Forest green", hex: "#313F30" },
+  { name: "Terracotta", hex: "#B96445" }, { name: "Mustard yellow", hex: "#EBB247" },
+  { name: "Mid grey", hex: "#868688" }, { name: "Aqua blue", hex: "#47BEDE" },
+  { name: "Silver", hex: "#C3CBCE" }, { name: "Espresso", hex: "#373131" },
+  { name: "Hot pink", hex: "#BA2954" }, { name: "Ice blue", hex: "#B2EBFC" },
+  { name: "Sea green", hex: "#00927F" }, { name: "Jet black", hex: "#141615" },
+  { name: "Emerald", hex: "#018659" }, { name: "Olive gold", hex: "#8E8343" },
+  { name: "Turquoise", hex: "#019EAF" }, { name: "Lavender", hex: "#CCB1D2" },
+  { name: "Lime", hex: "#D1E189" }, { name: "Taupe", hex: "#97847E" },
+  { name: "Grey", hex: "#A5A5A5" }, { name: "Golden yellow", hex: "#E2A025" },
+  { name: "Warm grey", hex: "#D0CACC" }, { name: "Midnight", hex: "#272332" },
+  { name: "Camel", hex: "#C7AC91" }, { name: "Moss", hex: "#414425" },
+  { name: "Bright orange", hex: "#FE6030" }, { name: "Navy", hex: "#272C4C" },
+  { name: "Pale aqua", hex: "#B3D7D7" }, { name: "Pistachio", hex: "#D9DFC5" },
+  { name: "Blue grey", hex: "#9AA6A4" }, { name: "Aubergine", hex: "#542549" },
+  { name: "Amber", hex: "#E68929" }, { name: "Violet", hex: "#574591" },
+  { name: "Bottle green", hex: "#04452F" }, { name: "Red", hex: "#CC0033" },
+  { name: "Cobalt", hex: "#0451A1" }, { name: "Azure", hex: "#0261A5" },
+  { name: "Dusty blue", hex: "#6EA0AB" }, { name: "Graphite", hex: "#434345" },
+  { name: "Sky blue", hex: "#96BAD2" }, { name: "Slate grey", hex: "#676B74" },
+  { name: "Dark charcoal", hex: "#383838" }, { name: "Lemon yellow", hex: "#EFD34C" },
+  { name: "Cyan", hex: "#5AC1D0" }, { name: "Ivory", hex: "#EBE8DF" },
+] as const;
+
+export function clothingColourHex(name: string) {
+  return clothingColours.find((colour) => colour.name === name)?.hex ?? "#1B1B1B";
+}

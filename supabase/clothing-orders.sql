@@ -34,7 +34,10 @@ begin
     if v_item->>'garment' not in ('Hoodie', 'Crew jumper', 'T-shirt', 'Drop Shoulder T-shirt') then raise exception 'Invalid clothing item.'; end if;
     if v_item->>'garment' = 'Hoodie' and coalesce(v_item->>'hoodie_style', '') not in ('Zip front', 'Overhead') then raise exception 'Choose a hoodie style.'; end if;
     if v_item->>'size' not in ('XS', 'S', 'M', 'L', 'XL', '2XL', '3XL') then raise exception 'Invalid size.'; end if;
-    if v_item->>'garment_colour' not in ('Black', 'Hot pink', 'Charcoal', 'White', 'Navy') then raise exception 'Invalid garment colour.'; end if;
+    if v_item->>'garment_colour' not in ('Black', 'Hot pink', 'Charcoal', 'White', 'Navy') and not (
+      char_length(coalesce(v_item->>'garment_colour', '')) between 1 and 40
+      and coalesce(v_item->>'garment_colour_hex', '') ~ '^#[0-9A-F]{6}$'
+    ) then raise exception 'Invalid garment colour.'; end if;
     if jsonb_typeof(v_item->'rear_logo') <> 'boolean' then raise exception 'Choose whether you want a rear logo.'; end if;
     if (v_item->>'rear_logo')::boolean and v_item->>'logo_colour' not in ('Pink', 'White', 'Black') then raise exception 'Invalid logo colour.'; end if;
   end loop;
