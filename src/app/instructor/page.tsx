@@ -18,7 +18,7 @@ export default async function InstructorPage() {
     <main className="min-h-screen bg-[#070707] text-white">
       <header className="border-b border-white/10 bg-black">
         <div className="section-shell flex items-center justify-between py-4">
-          <Link href="/" className="flex items-center gap-3"><span className="grid h-11 w-11 place-items-center overflow-hidden rounded-full bg-white"><Image src="/images/roadeyos-logo.jpg" alt="" width={80} height={80} className="h-full w-full object-contain" /></span><span className="text-lg font-black">Road-e-yo&apos;s<span className="text-pink">.</span></span></Link>
+          <Link href="/" className="flex items-center gap-3"><span className="grid h-11 w-11 place-items-center rounded-full"><Image src="/images/roadeyos-logo-glow.png" alt="" width={80} height={80} className="h-full w-full object-contain" /></span><span className="text-lg font-black">Road-e-yo&apos;s<span className="text-pink">.</span></span></Link>
           <InstructorSignOut />
         </div>
       </header>

@@ -12,8 +12,8 @@ export default function ResetPasswordPage() {
     <main className="min-h-screen bg-[#070707] px-5 py-12 text-white sm:py-20">
       <div className="mx-auto max-w-xl rounded-[2rem] border border-white/10 bg-[#101010] p-6 shadow-2xl sm:p-10">
         <Link href="/" className="flex items-center gap-3" aria-label="Road-e-yo's home">
-          <span className="grid h-12 w-12 place-items-center overflow-hidden rounded-full bg-white">
-            <Image src="/images/roadeyos-logo.jpg" alt="" width={80} height={80} className="h-full w-full object-contain object-center" />
+          <span className="grid h-12 w-12 place-items-center rounded-full">
+            <Image src="/images/roadeyos-logo-glow.png" alt="" width={80} height={80} className="h-full w-full object-contain object-center" />
           </span>
           <span className="text-xl font-black">Road-e-yo&apos;s<span className="text-pink">.</span></span>
         </Link>

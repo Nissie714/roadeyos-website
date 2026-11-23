@@ -7,7 +7,7 @@ export const metadata: Metadata = {
   description:
     "Bootcamp, HYROX training and personal coaching at Road-e-yo's in Old Romney, Kent.",
   applicationName: "Road-e-yo's",
-  manifest: "/site.webmanifest",
+  manifest: "/site.webmanifest?v=2",
   appleWebApp: {
     capable: true,
     title: "Road-e-yo's",
@@ -15,10 +15,10 @@ export const metadata: Metadata = {
   },
   icons: {
     icon: [
-      { url: "/icon-192.png", sizes: "192x192", type: "image/png" },
-      { url: "/icon-512.png", sizes: "512x512", type: "image/png" },
+      { url: "/icon-192.png?v=2", sizes: "192x192", type: "image/png" },
+      { url: "/icon-512.png?v=2", sizes: "512x512", type: "image/png" },
     ],
-    apple: [{ url: "/icon-180.png", sizes: "180x180", type: "image/png" }],
+    apple: [{ url: "/icon-180.png?v=2", sizes: "180x180", type: "image/png" }],
   },
 };
 

@@ -13,9 +13,9 @@ export default function AdminPreviewPage() {
       <header className="border-b border-white/10 bg-black">
         <div className="section-shell flex items-center justify-between py-4">
           <Link href="/" className="flex items-center gap-3" aria-label="Road-e-yo's home">
-            <span className="grid h-11 w-11 place-items-center overflow-hidden rounded-full bg-white">
+            <span className="grid h-11 w-11 place-items-center rounded-full">
               <Image
-                src="/images/roadeyos-logo.jpg"
+                src="/images/roadeyos-logo-glow.png"
                 alt=""
                 width={80}
                 height={80}
